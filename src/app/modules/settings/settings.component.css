@@ -1,0 +1,57 @@
+.settings-content {
+    width: 100%;
+    height: calc(100% - 56px);
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.settings {
+    height: calc(100% - 56px);
+    max-width: 660px;
+    margin: auto;
+}
+
+.settings h2 {
+    margin: 32px auto;
+    width: 100%;
+}
+
+.hr-line {
+    margin: 24px auto;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(235, 235, 235, 0.6);
+}
+
+.first-day-selector, .working-days-filter, .working-hours-selector {
+    width: 100%;
+    max-width: 660px;
+    height: 100%;
+}
+
+@media (max-width: 559px) {
+    .first-day-selector, .working-days-filter, .working-hours-selector {
+        display: content !important;
+    } 
+}
+
+@media (min-width: 560px) {
+    .first-day-selector, .working-days-filter, .working-hours-selector {
+        display: flex !important;
+    } 
+}
+
+.btn {
+    width: 100%;
+    max-width: 660px;
+    margin: 24px auto;
+    text-align: center;
+}
+
+.first-day-selector h4, .working-days-filter h4, .working-hours-selector h4 {
+    width: 100%;
+    max-width: 380px;
+    height: 100%;
+    margin: 8px 0;
+    font-weight: 600;
+}

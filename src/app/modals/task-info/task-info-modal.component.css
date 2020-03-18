@@ -1,0 +1,21 @@
+.mat-dialog-title {
+    margin: 0 0 8px;
+}
+
+.task-time {
+    color: rgb(130, 130, 130);
+    margin-bottom: 24px;
+}
+
+.bolder {
+    font-weight: 600;
+}
+
+.task-description p {
+    line-height: 1.5em;
+}
+
+.mat-dialog-actions {
+    float: right;
+    margin-right: 8px;
+}

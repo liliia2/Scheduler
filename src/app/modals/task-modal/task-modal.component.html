@@ -1,0 +1,71 @@
+<div class="modal-container" *ngIf="varStartHours">
+  <form [formGroup]="taskForm">
+    <h1 mat-dialog-title>Create new task</h1>
+    <div mat-dialog-content>
+      <mat-form-field class="task-name-field">
+        <mat-label>Enter the task name</mat-label>
+        <input matInput #taskName formControlName="title" maxlength="64" required>
+        <mat-hint align="end">{{ taskName.value.length }} / 64</mat-hint>
+      </mat-form-field>
+    </div>
+    <div mat-dialog-content>
+      <mat-form-field class="description-field">
+        <mat-label>Enter description</mat-label>
+        <input matInput #taskDescription formControlName="description" maxlength="320">
+        <mat-hint align="end">{{ taskDescription.value.length }} / 320</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="working-date-hours-selector">
+      <div>
+        <mat-form-field class="start-task-fields">
+          <mat-label>Start task</mat-label>
+          <mat-select formControlName="startTask" required>
+            <div *ngFor="let hour of varStartHours">
+              <mat-option [value]="hour" (click)="setStartHour(hour)">{{ hour }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="end-task-fields">
+          <mat-label>End task</mat-label>
+          <mat-select formControlName="endTask" required>
+            <div *ngFor="let hour of varEndHours">
+              <mat-option [value]="hour" (click)="setEndHour(hour)">{{ hour }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <mat-form-field class="date-picker-field">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="day" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field class="task-type">
+        <mat-label>Choose type for task</mat-label>
+        <mat-select formControlName="type" required>
+          <div *ngFor="let type of types">
+            <mat-option [value]="type">{{ type }}</mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field class="responsible-user">
+        <mat-label>Choose responsible user</mat-label>
+        <mat-select [(value)]="responsibleUser" formControlName="responsibleUser" required>
+          <div *ngFor="let user of users">
+            <mat-option [value]="user">{{ user.fullName }}</mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancelClick()">Cancel</button>
+      <button mat-raised-button color="accent" [mat-dialog-close]="data.animal" (click)="saveTask()">Save</button>
+    </div>
+  </form>
+</div>

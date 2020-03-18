@@ -1,0 +1,25 @@
+.modal-container {
+    width: 492px;
+}
+
+.task-name-field,
+.description-field,
+.working-date-hours-selector,
+.task-type,
+.responsible-user {
+    width: 480px;
+}
+
+.working-date-hours-selector {
+    display: flex;
+}
+
+.date-picker-field, .start-task-fields, .end-task-fields {
+    width: 152px;
+    padding-right: 12px;
+}
+
+.mat-dialog-actions {
+    float: right;
+    margin-right: 8px;
+}

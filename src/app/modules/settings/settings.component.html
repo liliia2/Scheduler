@@ -1,0 +1,60 @@
+<div class="settings-content">
+  <div class="settings">
+    <div class="header">
+      <h2>Settings</h2>
+    </div>
+    <div class="hr-line"></div>
+    <div *ngIf="settings">
+      <div class="first-day-selector">
+        <h4>Select first day of week</h4>
+        <mat-form-field>
+          <mat-label>First day of week</mat-label>
+          <mat-select [(value)]="firstWeekDay">
+            <div *ngFor="let day of daysOfWeek; let i = index">
+              <mat-option [value]="day" (click)="editModeOn()">{{ day }}</mat-option>
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="hr-line"></div>
+      <div class="working-days-filter">
+        <h4>Select working days</h4>
+        <div class="boxes">
+          <section *ngFor="let day of daysOfWeek; let i = index" class="checkbox">
+            <mat-checkbox [checked]="checkWorkingDays(i)" (change)="changeWorkingDaysList(i)">{{ day }}</mat-checkbox>
+          </section>
+        </div>
+      </div>
+      <div class="hr-line"></div>
+      <div class="working-hours-selector">
+        <h4>Set up working hours</h4>
+        <div>
+          <div class="start-work-hour-selector">
+            <mat-form-field>
+              <mat-label>Select start working hour</mat-label>
+              <mat-select [(value)]="startHour">
+                <div *ngFor="let hour of varStartHours">
+                  <mat-option [value]="hour" (click)="changeStartHour(hour)">{{ hour }}</mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="end-work-hour-selector">
+            <mat-form-field>
+              <mat-label>Select end working hour</mat-label>
+              <mat-select [(value)]="endHour">
+                <div *ngFor="let hour of varEndHours">
+                  <mat-option [value]="hour" (click)="changeEndHour(hour)">{{ hour }}</mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hr-line"></div>
+    <div class="btn">
+      <button mat-raised-button color="accent" [disabled]="!editMode" (click)="saveSettings()">Save settings</button>
+    </div>
+  </div>
+</div>

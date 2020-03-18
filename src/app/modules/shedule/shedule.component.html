@@ -1,0 +1,79 @@
+<div class="content">
+    <div class="filters">
+        <div class="calendar">
+            <mat-calendar [(selected)]="selectedDay"></mat-calendar>
+        </div>
+        <div>
+            <mat-form-field class="range-selector">
+                <mat-label>Select a range for shedule</mat-label>
+                <mat-select [(value)]="selectedRange">
+                    <div *ngFor="let range of ranges">
+                        <mat-option [value]="range">{{ range }}</mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="selectedRange !== ranges[2]">
+            <mat-form-field class="interval-selector">
+                <mat-label>Select an interval for shedule</mat-label>
+                <mat-select [(value)]="timeInterval">
+                    <mat-option [value]=30>30</mat-option>
+                    <mat-option [value]=60>60</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="selectedRange !== ranges[0]" class="working-day-filter">
+            <section class="slider">
+                <mat-slide-toggle [checked]="displayOnlyWorkingDays" (change)="changeDisplayedDays()">
+                    <span>Show only working days</span>
+                </mat-slide-toggle>
+            </section>
+        </div>
+        <div class="responsible-user-filter">
+            <h4>Check responsible user</h4>
+            <section *ngFor="let user of users" class="checkbox">
+                <mat-checkbox [checked]="checkShowedUserFilter(user.id)" (change)="changeShowedUsersList(user.id)">{{ user.fullName }}</mat-checkbox>
+            </section>
+        </div>
+        <div class="type-filter">
+            <h4>Check tasks type</h4>
+            <section *ngFor="let type of types" class="checkbox">
+                <mat-checkbox [checked]="checkShowedTypeFilter(type)" (change)="changeShowedTypeList(type)">{{ type }}</mat-checkbox>
+            </section>
+        </div>
+    </div>
+    <app-day
+        class="shedule-day"
+        *ngIf="selectedRange === ranges[0] && settings"
+        [selectedDay]="selectedDay"
+        [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays"
+        [startHour]="startHour"
+        [endHour]="endHour"
+        [timeInterval]="timeInterval">
+    </app-day>
+    <app-week
+        class="shedule-week"
+        *ngIf="selectedRange === ranges[1] && settings"
+        [selectedDay]="selectedDay"
+        [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays"
+        [startHour]="startHour"
+        [endHour]="endHour"
+        [displayOnlyWorkingDays]="displayOnlyWorkingDays"
+        [timeInterval]="timeInterval">
+    </app-week>
+    <app-month
+        class="shedule-month"
+        *ngIf="selectedRange === ranges[2] && settings"
+        [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers"
+        [selectedDay]="selectedDay"
+        [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays"
+        [startHour]="startHour"
+        [endHour]="endHour"
+        [displayOnlyWorkingDays]="displayOnlyWorkingDays"
+        [timeInterval]="timeInterval">
+    </app-month>
+</div>

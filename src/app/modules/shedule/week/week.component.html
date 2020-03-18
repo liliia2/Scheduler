@@ -1,0 +1,35 @@
+<div class="week-shedule-container">
+    <div class="selected-range">
+        <h2>{{ displayedDays[0] | date: 'dd MMMM' }} - {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}</h2>
+        <div class="btn">
+            <button mat-raised-button color="accent" (click)="addNewTask()">New task</button>
+        </div>
+    </div>
+    <div class="table">
+        <div>
+            <div class="empty-block"></div>
+            <div class="time-block" [ngStyle]="{ 'grid-template-rows': 'repeat(' + workingHours.length + ', 1fr)' }">
+                <div class="time" *ngFor="let time of workingHours">
+                    <span>{{ time }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="shedule">
+            <div class="date-block">
+                <div
+                    class="day"
+                    *ngFor="let day of displayedDays; let i = index"
+                    [ngClass]="{selected: i === numberOfSelectedDay}">
+                    <span>{{ day | date: 'EE, dd MMM' }}</span>
+                </div>
+            </div>
+            <div class="ceil-block">
+                <div class="day-in-ceil-block" *ngFor="let day of displayedDays; let i = index"
+                    [ngClass]="{ selected: i === numberOfSelectedDay }"
+                    [ngStyle]="{ 'grid-template-rows': 'repeat(' + workingHours.length + ', 1fr)' }">
+                    <div class="ceil" *ngFor="let hour of workingHours"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

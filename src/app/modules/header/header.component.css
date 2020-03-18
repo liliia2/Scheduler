@@ -1,0 +1,23 @@
+.header {
+    height: 60px;
+    margin: -8px;
+    display: flex;
+    align-items: center;
+    background-color: #1976d2;
+    color: white;
+    font-weight: 600;
+}
+
+.header p {
+    font-size: 18px;
+    margin-left: 32px;
+    padding-top: 6px;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    margin: auto;
+    margin-right: 32px;
+    padding-top: 8px;
+}

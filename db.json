@@ -1,0 +1,15 @@
+{
+  "tasks": [
+    { "id": 1, "taskStart": 1584086400, "taskEnd": 1584093600, "type": "Type1", "title": "First task", "description": "Way own uncommonly travelling now acceptance bed compliment solicitude. Happiness remainder joy but earnestly for off. Feel and make two real miss use easy. You high bed wish help call draw side. Strictly numerous outlived kindness whatever on we no on addition. Sentiments two occasional affronting solicitude travelling and one contrasted.", "responsibleUser": { "fullName": "Name1 Surname1", "id": 1 } },
+    { "id": 2, "taskStart": 1584275027, "taskEnd": 1584285827, "type": "Type2", "title": "Second task", "description": "Short description for task", "responsibleUser": { "fullName": "Name2 Surname2", "id": 2 } },
+    { "id": 3, "taskStart": 1592086400, "taskEnd": 1596086400, "type": "Type3", "title": "Third task", "description": "Short description for task", "responsibleUser": { "fullName": "Name3 Surname3", "id": 3 } },
+    { "id": 4, "taskStart": 1584275080, "taskEnd": 1584275380, "type": "Type3", "title": "Fourth task with long name", "description": "Short description for task", "responsibleUser": { "fullName": "Name1 Surname1", "id": 1 } }
+  ],
+  "profiles": [
+    { "id": 1, "fullName": "Name1 Surname1" },
+    { "id": 2, "fullName": "Name2 Surname2" },
+    { "id": 3, "fullName": "Name3 Surname3" }
+  ],
+  "settings": 
+    { "startWeek": 1, "workingDays": [1, 2, 3, 4, 5], "startHour": "08:00", "endHour": "18:30", "lang": "en" }
+}

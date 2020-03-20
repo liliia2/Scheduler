@@ -17,12 +17,10 @@ export class SettingsService {
   updateSettings(settings: ISettings): Observable<ISettings> {
     const queryString = 'https://my-json-server.typicode.com/liliia2/typicode_db/settings';
     const data = JSON.stringify(settings);
-
     return this.http.post<any>(queryString, data).pipe(map((response) => {
       console.log('response', response);
       return response.data as ISettings;
-    }));
-    
+    })); 
   }
 
 }

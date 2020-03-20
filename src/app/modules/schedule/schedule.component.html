@@ -5,7 +5,7 @@
         </div>
         <div>
             <mat-form-field class="range-selector">
-                <mat-label>Select a range for shedule</mat-label>
+                <mat-label>Select a range for schedule</mat-label>
                 <mat-select [(value)]="selectedRange">
                     <div *ngFor="let range of ranges">
                         <mat-option [value]="range">{{ range }}</mat-option>
@@ -15,7 +15,7 @@
         </div>
         <div *ngIf="selectedRange !== ranges[2]">
             <mat-form-field class="interval-selector">
-                <mat-label>Select an interval for shedule</mat-label>
+                <mat-label>Select an interval for schedule</mat-label>
                 <mat-select [(value)]="timeInterval">
                     <mat-option [value]=30>30</mat-option>
                     <mat-option [value]=60>60</mat-option>
@@ -43,7 +43,7 @@
         </div>
     </div>
     <app-day
-        class="shedule-day"
+        class="schedule-day"
         *ngIf="selectedRange === ranges[0] && settings"
         [selectedDay]="selectedDay"
         [firstDayOfWeek]="firstDayOfWeek"
@@ -53,7 +53,7 @@
         [timeInterval]="timeInterval">
     </app-day>
     <app-week
-        class="shedule-week"
+        class="schedule-week"
         *ngIf="selectedRange === ranges[1] && settings"
         [selectedDay]="selectedDay"
         [firstDayOfWeek]="firstDayOfWeek"
@@ -64,7 +64,7 @@
         [timeInterval]="timeInterval">
     </app-week>
     <app-month
-        class="shedule-month"
+        class="schedule-month"
         *ngIf="selectedRange === ranges[2] && settings"
         [checkedTypes]="checkedTypes"
         [checkedUsers]="checkedUsers"

@@ -30,7 +30,6 @@ export class SettingsEffects {
     updateSettings$ = this.actions$.pipe(
         ofType<UpdateSettings>(ESettingsActions.UPDATE_SETTINGS),
         switchMap(action => {
-            // console.log('Update settings in updateSettings effects', action);
             return this.settingsService.updateSettings(action.payload).pipe(
                 mergeMap(x => {
                     console.log('Update settings in effects', x);
@@ -38,16 +37,9 @@ export class SettingsEffects {
                 }),
                 catchError((error) => {
                     console.log('Update Error settings in effects', error);
-                    return of(error);
+                    return of(new UpdateSettingsFail(error));
                 })
             );
-            // return this.settingsService.updateSettings(action.payload)
-            //     .((x) => {
-            //         if (x) {
-            //             console.log('Update settings in effects', x);
-            //             return of(new UpdateSettingsSuccess(x));
-            //         }
-            //     });
         })
     );
 

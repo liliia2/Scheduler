@@ -13,11 +13,11 @@ import { LoadUsers } from 'src/app/store/actions/users.actions';
 import { LoadSettings } from 'src/app/store/actions/settings.actions';
 
 @Component({
-  selector: 'app-shedule',
-  templateUrl: './shedule.component.html',
-  styleUrls: ['./shedule.component.css']
+  selector: 'app-schedule',
+  templateUrl: './schedule.component.html',
+  styleUrls: ['./schedule.component.css']
 })
-export class SheduleComponent implements OnInit, OnDestroy {
+export class ScheduleComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   ranges: Array<string> = ['Day', 'Week', 'Month'];
   showAllTasksTypes: boolean = true;

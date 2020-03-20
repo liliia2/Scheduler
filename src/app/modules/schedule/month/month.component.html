@@ -1,0 +1,50 @@
+<div class="month-schedule-container"
+    *ngIf="filtredTasks"
+    (click)="dragDropMode && stopDragTask()"
+    (mousemove)="dragTask.task && getTaskPosition($event)">
+    <div class="drag-task"
+        *ngIf="dragDropMode && dragTask.top"
+        [ngStyle]="dragTask.task && { 'left': dragTask.left, 'top': dragTask.top }">
+        <p>{{ dragTask.task.title }}</p>
+    </div>
+    <div class="selected-range">
+        <h2>{{ displayedDays[0] | date: 'dd' }} - {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}
+        </h2>
+        <div class="btn">
+            <button mat-raised-button color="accent" (click)="addNewTask()">New task</button>
+        </div>
+    </div>
+    <div class="table" *ngIf="weekDaysArr">
+        <div class="schedule">
+            <div class="date-block">
+                <div class="day"
+                    *ngFor="let dayOfWeek of weekDaysArr">
+                    <span>{{ dayOfWeek }}</span>
+                </div>
+            </div>
+            <div class="ceil-block"
+                [ngStyle]="{ 'grid-template-columns': 'repeat(' + weekDaysArr.length + ', minmax(90px, 1fr))' }">
+                <div class="day-in-ceil-block"
+                    *ngFor="let day of allCeil; let i = index"
+                    (mouseup)="dragDropMode && updateTask(day.date)"
+                    [ngClass]="{ selected: i === numberOfSelectedDay }">
+                    <div class="ceil" (click)="day.date && addNewTask(day.date)">
+                        <p *ngIf="day.date; else elseBlock">
+                            {{ day.date | date: 'd MMM' }}
+                        </p>
+                        <div *ngIf="day.tasks.length">
+                            <div class="task-view" *ngFor="let task of day.tasks">
+                                <div class="task" (click)="task && showTaskInfo(task)"
+                                    (mousedown)="!showTaskInfoMode && task && tapTask(task)">
+                                    <p>{{ task.title }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="place-for-task" *ngIf="dragDropMode && day.date"></div>
+                        <ng-template #elseBlock></ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

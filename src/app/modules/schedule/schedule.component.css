@@ -48,7 +48,7 @@ section.checkbox {
     margin: 4px 0;
 }
 
-.shedule-day, .shedule-week, .shedule-month {
+.schedule-day, .schedule-week, .schedule-month {
     min-width: 116px;
     width: calc(100% - 256px);
     padding: 8px 0 0 24px;
@@ -57,25 +57,25 @@ section.checkbox {
 }
 
 @media (min-width: 979px) {
-    .shedule-day, .shedule-week, .shedule-month {
+    .schedule-day, .schedule-week, .schedule-month {
         overflow: hidden;
     } 
 }
 
 @media (max-width: 980px) {
-    .shedule-day, .shedule-week, .shedule-month {
+    .schedule-day, .schedule-week, .schedule-month {
         width: calc(100% - 256px);
     } 
 }
 
 @media (min-height: 600px) {
-    .shedule-day, .shedule-week, .shedule-month {
+    .schedule-day, .schedule-week, .schedule-month {
         min-height: 520px;
     } 
 }
 
 @media (max-height: 599px) {
-    .shedule-day, .shedule-week, .shedule-month {
+    .schedule-day, .schedule-week, .schedule-month {
         overflow-y: scroll;
         height: calc(100% - 8px);
     } 

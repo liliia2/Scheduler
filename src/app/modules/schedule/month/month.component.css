@@ -1,4 +1,4 @@
-.month-shedule-container {
+.month-schedule-container {
     margin: 0;
     height: calc(100% - 8px);
     width: 100%;
@@ -21,9 +21,10 @@
     height: calc(100% - 52px);
     width: 100%;
     display: flex;
+    user-select: none;
 }
 
-.shedule {
+.schedule {
     min-width: 660px;
     height: 100%;
     width: 100%;
@@ -82,9 +83,37 @@
     height: 24px;
 }
 
-.task-view p {
+.task-view p, 
+.drag-task p {
     padding: 4px;
     margin: 0;
     size: 12;
     white-space: nowrap;
+}
+
+.drag-task {
+    background-color: #10bd8f;
+    border-radius: 4px;
+    color: white;
+    width: 100px;
+    height: 75px;
+    text-align: left;
+    margin: 2px;
+    position: absolute;
+}
+
+.drag-task p {
+    white-space: inherit;
+}
+
+.place-for-task {
+    margin: 2px;
+    height: 24px;
+    width: 1px;
+    background-color: rgba(93, 125, 255, 0.5);
+    display: none;
+}
+
+.ceil:hover .place-for-task {
+    display: block;
 }

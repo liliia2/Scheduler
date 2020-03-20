@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "my-sheduler": {
+    "my-scheduler": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/my-sheduler",
+            "outputPath": "dist/my-scheduler",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -64,18 +64,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "my-sheduler:build"
+            "browserTarget": "my-scheduler:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "my-sheduler:build:production"
+              "browserTarget": "my-scheduler:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "my-sheduler:build"
+            "browserTarget": "my-scheduler:build"
           }
         },
         "test": {
@@ -113,16 +113,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "my-sheduler:serve"
+            "devServerTarget": "my-scheduler:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "my-sheduler:serve:production"
+              "devServerTarget": "my-scheduler:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "my-sheduler"
+  "defaultProject": "my-scheduler"
 }

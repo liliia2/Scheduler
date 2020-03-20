@@ -19,15 +19,15 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CustomDateAdapter } from './modules/shedule/custom-date-adapter';
-import { DayComponent } from './modules/shedule/day/day.component';
+import { CustomDateAdapter } from './modules/schedule/custom-date-adapter';
+import { DayComponent } from './modules/schedule/day/day.component';
 import { HeaderComponent } from './modules/header/header.component';
-import { MonthComponent } from './modules/shedule/month/month.component';
+import { MonthComponent } from './modules/schedule/month/month.component';
 import { SettingsComponent } from './modules/settings/settings.component';
-import { SheduleComponent } from './modules/shedule/shedule.component';
+import { ScheduleComponent } from './modules/schedule/schedule.component';
 import { TaskModalComponent } from './modals/task-modal/task-modal.component';
 import { TaskInfoModalComponent } from './modals/task-info/task-info-modal.component';
-import { WeekComponent } from './modules/shedule/week/week.component';
+import { WeekComponent } from './modules/schedule/week/week.component';
 
 import { SettingsEffects } from './store/effects/settings.effects';
 import { TasksEffects } from './store/effects/tasks.effects';
@@ -43,7 +43,7 @@ import { usersReducers } from './store/reducers/users.reducers';
     HeaderComponent,
     MonthComponent,
     SettingsComponent,
-    SheduleComponent,
+    ScheduleComponent,
     TaskModalComponent,
     TaskInfoModalComponent,
     WeekComponent

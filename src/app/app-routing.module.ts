@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { SheduleComponent } from './modules/shedule/shedule.component';
+import { ScheduleComponent } from './modules/schedule/schedule.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/shedule',
+    redirectTo: '/schedule',
     pathMatch: 'full'
   },
   {
-    path: 'shedule',
-    component: SheduleComponent
+    path: 'schedule',
+    component: ScheduleComponent
   },
   {
     path: 'settings',

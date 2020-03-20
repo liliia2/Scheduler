@@ -1,4 +1,4 @@
-.week-shedule-container {
+.week-schedule-container {
     margin: 0;
     height: 100%;
     width: 100%;
@@ -45,7 +45,7 @@
     height: 100%;
 }
 
-.shedule {
+.schedule {
     height: 100%;
     width: calc(100% - 56px);
 }

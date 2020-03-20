@@ -8,7 +8,7 @@ import { TaskModalComponent } from '../../../modals/task-modal/task-modal.compon
 import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-modal.component';
 import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
 import { ITask } from 'src/app/models/task';
-import { LoadTasks } from 'src/app/store/actions/tasks.actions';
+import { LoadTasks, UpdateTask } from 'src/app/store/actions/tasks.actions';
 
 import * as moment from 'moment';
 
@@ -37,21 +37,29 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   allCeil: Array<any>;
   allTasks: ITask[];
   filtredTasks: ITask[];
-  showTaskInfoMode: boolean;
+  showTaskInfoMode: boolean = false;
+  dragDropMode: boolean = false;
+  dragTask: {
+    'task': ITask,
+    'left': string;
+    'top': string;
+  };
 
   constructor(
     private store: Store<IAppState>,
     public dialog: MatDialog
   ) {
     this.getRange();
+    this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
       if (result && !this.allTasks) {
         this.allTasks = result; // фильтр тасок по времени внутри запроса, простая сортировка по времени
-        if (this.checkedTypes && this.checkedUsers) { this.createSchedule(); }
+        if (this.checkedTypes && this.checkedUsers) {
+          this.createSchedule();
+        }
       }
     });
     this.subscription.add(tasksSub);
-    this.showTaskInfoMode = false;
   }
 
   ngOnInit() {
@@ -161,15 +169,50 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     return tasks.filter((task) => this.checkedTypes.includes(task.type));
   }
 
+  tapTask(task: ITask) {
+    setTimeout(() => {
+      this.checkTasksMode(task);
+    }, 300);
+  }
+
+  checkTasksMode(task: ITask) {
+    if (this.showTaskInfoMode) {
+      this.stopDragTask();
+    } else {
+      this.dragDropMode = true;
+      this.dragTask.task = task;
+    }
+  }
+
+  getTaskPosition(event: any) {
+    this.dragTask = {
+      'task': this.dragTask.task,
+      'left': event.pageX + 2 + 'px',
+      'top': event.pageY + 2 + 'px'
+    };
+  }
+
+  stopDragTask() {
+    this.dragDropMode = false;
+    this.dragTask = {
+      'task': null,
+      'left': '',
+      'top': ''
+    };
+  }
+
   showTaskInfo(task: ITask) {
-    this.showTaskInfoMode = true;
-    const dialogRef = this.dialog.open(TaskInfoModalComponent, {
-      width: '540px',
-      data: task
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
-    });
+    if (!this.dragDropMode) {
+      this.showTaskInfoMode = true;
+      const dialogRef = this.dialog.open(TaskInfoModalComponent, {
+        width: '540px',
+        data: task
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        this.showTaskInfoMode = false;
+      });
+    }
   }
 
   addNewTask(day?: Date) {
@@ -183,9 +226,20 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
       dialogRef.afterClosed().subscribe(result => {
         console.log('The dialog was closed', result);
       });
-    } else {
-      this.showTaskInfoMode = false;
     }
+  }
+
+  updateTask(day: Date) {
+    let task = this.dragTask.task;
+    task.taskStart = Number(moment(day)
+      .add(moment(task.taskStart, 'X').format('HH'), 'hours')
+      .add(moment(task.taskStart, 'X').format('mm'), 'minutes')
+      .format('X'));
+    task.taskEnd = Number(moment(day)
+      .add(moment(task.taskEnd, 'X').format('HH'), 'hours')
+      .add(moment(task.taskEnd, 'X').format('mm'), 'minutes')
+      .format('X'));
+    this.store.dispatch(new UpdateTask(task));
   }
 
 }

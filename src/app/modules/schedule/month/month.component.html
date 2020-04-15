@@ -16,7 +16,8 @@
     </div>
     <div class="table" *ngIf="weekDaysArr">
         <div class="schedule">
-            <div class="date-block">
+            <div class="date-block"
+                [ngStyle]="{ 'grid-template-columns': 'repeat(' + weekDaysArr.length + ', minmax(90px, 1fr))' }">
                 <div class="day"
                     *ngFor="let dayOfWeek of weekDaysArr">
                     <span>{{ dayOfWeek }}</span>

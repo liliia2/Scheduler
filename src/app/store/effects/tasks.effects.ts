@@ -10,9 +10,9 @@ import {
     LoadTasks,
     LoadTasksSuccess,
     LoadTasksFail,
-    UpdateTask,
-    UpdateTaskSuccess,
-    UpdateTaskFail
+    UpdateTasks,
+    UpdateTasksSuccess,
+    UpdateTasksFail
 } from '../actions/tasks.actions';
 
 @Injectable()
@@ -21,24 +21,23 @@ export class TasksEffects {
     loadTasks$ = this.actions$.pipe(
         ofType<LoadTasks>(ETasksActions.LOAD_TASKS),
         switchMap(() => this.tasksService.getTasks()),
-        switchMap((tasks: ITask[]) => {
-            return of(new LoadTasksSuccess(tasks));
+        switchMap((tasks: TasksGet) => {
+            const result = JSON.parse(tasks.data);
+            return of(new LoadTasksSuccess(result));
         })
     );
 
     @Effect()
-    updateTask$ = this.actions$.pipe(
-        ofType<UpdateTask>(ETasksActions.UPDATE_TASK),
+    updateTasks$ = this.actions$.pipe(
+        ofType<UpdateTasks>(ETasksActions.UPDATE_TASKS),
         switchMap(action => {
-            console.log('Update Task in UpdateTask effects', action);
-            return this.tasksService.updateTask(action.payload).pipe(
-                mergeMap(x => {
-                    console.log('Update Task in effects', x);
-                    return of(new UpdateTaskSuccess(x));
+            return this.tasksService.updateTasks(action.payload).pipe(
+                mergeMap((tasks: TasksGet) => {
+                    const result = JSON.parse(tasks.data);
+                    return of(new UpdateTasksSuccess(result));
                 }),
                 catchError((error) => {
-                    console.log('Update Task Error  in effects', error);
-                    return of(new UpdateTaskFail(error));
+                    return of(new UpdateTasksFail(error));
                 })
             );
         })

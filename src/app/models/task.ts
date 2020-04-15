@@ -1,8 +1,7 @@
 import { IUser } from 'src/app/models/user';
 
 export interface TasksGet {
-  success: boolean;
-  data: Tasks;
+  data: string;
 }
 
 export interface Tasks {
@@ -11,8 +10,9 @@ export interface Tasks {
 
 export interface ITask {
   id: number;
-  taskStart: number;
-  taskEnd: number;
+  start: number;
+  end: number;
+  day: number;
   type: string;
   title: string;
   description: string;

@@ -6,7 +6,7 @@ import { ITask } from '../../models/task';
 import { TaskModalComponent } from '../task-modal/task-modal.component';
 
 @Component({
-  selector: 'task-info-modal',
+  selector: 'app-task-info-modal',
   templateUrl: 'task-info-modal.component.html',
   styleUrls: ['./task-info-modal.component.css']
 })
@@ -20,16 +20,16 @@ export class TaskInfoModalComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: ITask
   ) { }
-  
+
   ngOnInit() {
     this.task = this.data;
     this.date = this.getSateString();
   }
 
   getSateString(): string {
-    const startTask = moment(this.task.taskStart, 'X').format('HH:mm');
-    const endTask = moment(this.task.taskEnd, 'X').format('HH:mm');
-    return moment(this.task.taskStart, 'X').format('DD MMMM YYYY') + ', ' + startTask + ' - '+ endTask;
+    const startTask = moment(this.task.start, 'X').format('HH:mm');
+    const endTask = moment(this.task.end, 'X').format('HH:mm');
+    return moment(this.task.start, 'X').format('DD MMMM YYYY') + ', ' + startTask + ' - ' + endTask;
   }
 
   editTask(task: ITask) {
@@ -42,8 +42,8 @@ export class TaskInfoModalComponent implements OnInit {
     });
   }
 
-  onCancelClick():void {
+  onCancelClick(): void {
     this.dialogRef.close();
   }
-  
+
 }

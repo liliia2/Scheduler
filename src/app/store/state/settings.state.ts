@@ -1,4 +1,4 @@
-import { ISettings, SettingsGet } from 'src/app/models/settings';
+import { ISettings } from 'src/app/models/settings';
 
 export interface ISettingsState {
     settings: ISettings;

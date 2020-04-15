@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 .content {
     display: flex;
     width: 100%;
@@ -76,7 +80,6 @@ section.checkbox {
 
 @media (max-height: 599px) {
     .schedule-day, .schedule-week, .schedule-month {
-        overflow-y: scroll;
         height: calc(100% - 8px);
     } 
 }

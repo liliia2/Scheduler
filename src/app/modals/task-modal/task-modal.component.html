@@ -56,7 +56,7 @@
     <div>
       <mat-form-field class="responsible-user">
         <mat-label>Choose responsible user</mat-label>
-        <mat-select [(value)]="responsibleUser" formControlName="responsibleUser" required>
+        <mat-select [compareWith]="compareFn" formControlName="responsibleUser" required>
           <div *ngFor="let user of users">
             <mat-option [value]="user">{{ user.fullName }}</mat-option>
           </div>

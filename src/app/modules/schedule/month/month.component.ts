@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -8,7 +8,8 @@ import { TaskModalComponent } from '../../../modals/task-modal/task-modal.compon
 import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-modal.component';
 import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
 import { ITask } from 'src/app/models/task';
-import { LoadTasks, UpdateTask } from 'src/app/store/actions/tasks.actions';
+import { LoadTasks, UpdateTasks } from 'src/app/store/actions/tasks.actions';
+import { TasksEffects } from 'src/app/store/effects/tasks.effects';
 
 import * as moment from 'moment';
 
@@ -24,7 +25,6 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   @Input() workingDays: Array<number>;
   @Input() startHour: string;
   @Input() endHour: string;
-  @Input() timeInterval: number;
   @Input() displayOnlyWorkingDays: boolean;
   @Input() checkedTypes: Array<string>;
   @Input() checkedUsers: Array<number>;
@@ -32,13 +32,13 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   endMonth: Date;
   workingHours: Array<string>;
   displayedDays: Array<Date>;
-  numberOfSelectedDay: number | false;
+  numberOfSelectedDay: number;
   weekDaysArr: Array<string>;
   allCeil: Array<any>;
   allTasks: ITask[];
   filtredTasks: ITask[];
-  showTaskInfoMode: boolean = false;
-  dragDropMode: boolean = false;
+  showTaskInfoMode = false;
+  dragDropMode = false;
   dragTask: {
     'task': ITask,
     'left': string;
@@ -47,13 +47,14 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private store: Store<IAppState>,
+    private tasksEffects: TasksEffects,
     public dialog: MatDialog
   ) {
     this.getRange();
     this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
-      if (result && !this.allTasks) {
-        this.allTasks = result; // фильтр тасок по времени внутри запроса, простая сортировка по времени
+      if (result && !this.allTasks || result && result !== this.allTasks) {
+        this.allTasks = result;
         if (this.checkedTypes && this.checkedUsers) {
           this.createSchedule();
         }
@@ -77,7 +78,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  createSchedule(){
+  createSchedule() {
     this.filtredTasks = this.tasksFilterByUser();
     this.allCeil = this.getAllCeil();
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
@@ -106,7 +107,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getAllCeil(): any {
-    let ceils = [];
+    const ceils = [];
     let j = this.firstDayOfWeek;
     while (j % 7 !== moment(this.displayedDays[0]).weekday() % 7) {
       if (!this.displayOnlyWorkingDays || this.workingDays.includes(j)) {
@@ -114,9 +115,9 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
       }
       j++;
     }
-    for (let item of this.displayedDays) {
+    for (const item of this.displayedDays) {
       const dateInUnix = moment(item).format('X');
-      let tasksArr = this.getTaskByDate(dateInUnix); // запрос только когда есть таски
+      const tasksArr = this.getTaskByDate(dateInUnix); // запрос только когда есть таски
       ceils.push({ date: item, tasks: tasksArr });
     }
     if (this.displayOnlyWorkingDays) {
@@ -135,7 +136,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     return days.filter(el => this.workingDays.includes(moment(el).weekday()));
   }
 
-  getNumberOfSelectedDay(): number | false {
+  getNumberOfSelectedDay(): number {
     if (moment(this.displayedDays[0]).isSame(this.selectedDay, 'month')) {
       for (let i = 0; i < this.allCeil.length; i++) {
         if (this.allCeil[i].date && moment(this.selectedDay).isSame(this.allCeil[i].date, 'day')) {
@@ -143,7 +144,6 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     }
-    return false;
   }
 
   getWeekDaysArr(): Array<string> {
@@ -157,11 +157,11 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getTaskByDate(date: string): ITask[] {
-    return this.filtredTasks.filter((task) => moment(task.taskStart, 'X').startOf('day').format('X') === date);
+    return this.filtredTasks.filter((task) => moment(task.day, 'X').startOf('day').format('X') === date);
   }
 
   tasksFilterByUser() {
-    let filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
+    const filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
     return this.tasksFilterByType(filtredByUser);
   }
 
@@ -186,18 +186,18 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   getTaskPosition(event: any) {
     this.dragTask = {
-      'task': this.dragTask.task,
-      'left': event.pageX + 2 + 'px',
-      'top': event.pageY + 2 + 'px'
+      task: this.dragTask.task,
+      left: event.pageX + 2 + 'px',
+      top: event.pageY + 2 + 'px'
     };
   }
 
   stopDragTask() {
     this.dragDropMode = false;
     this.dragTask = {
-      'task': null,
-      'left': '',
-      'top': ''
+      task: null,
+      left: '',
+      top: ''
     };
   }
 
@@ -220,7 +220,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
       const dialogRef = this.dialog.open(TaskModalComponent, {
         width: '540px',
         data: {
-          taskStart: day
+          day
         },
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -230,16 +230,25 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateTask(day: Date) {
-    let task = this.dragTask.task;
-    task.taskStart = Number(moment(day)
-      .add(moment(task.taskStart, 'X').format('HH'), 'hours')
-      .add(moment(task.taskStart, 'X').format('mm'), 'minutes')
+    const task = this.dragTask.task;
+    task.start = Number(moment(day)
+      .add(moment(task.start, 'X').format('HH'), 'hours')
+      .add(moment(task.start, 'X').format('mm'), 'minutes')
       .format('X'));
-    task.taskEnd = Number(moment(day)
-      .add(moment(task.taskEnd, 'X').format('HH'), 'hours')
-      .add(moment(task.taskEnd, 'X').format('mm'), 'minutes')
+    task.end = Number(moment(day)
+      .add(moment(task.end, 'X').format('HH'), 'hours')
+      .add(moment(task.end, 'X').format('mm'), 'minutes')
       .format('X'));
-    this.store.dispatch(new UpdateTask(task));
+    task.day = Number(moment(day)
+      .startOf('day')
+      .format('X'));
+    this.allTasks.map((el) => {
+      if (el.id === task.id) {
+        el = task;
+      }
+    });
+    this.stopDragTask();
+    this.store.dispatch(new UpdateTasks(this.allTasks));
   }
 
 }

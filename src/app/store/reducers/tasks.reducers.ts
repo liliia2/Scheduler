@@ -26,6 +26,26 @@ export const tasksReducers = (
                 loading: false
             };
         }
+        case ETasksActions.UPDATE_TASKS: {
+            return {
+                ...state,
+                tasks: null
+            };
+        }
+        case ETasksActions.UPDATE_TASKS_SUCCESS: {
+            return {
+                ...state,
+                tasks: action.payload,
+                loading: true
+            };
+        }
+        case ETasksActions.UPDATE_TASKS_FAIL: {
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            };
+        }
         default:
             return state;
     }

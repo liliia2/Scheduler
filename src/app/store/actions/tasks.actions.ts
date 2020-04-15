@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { ITask, TasksGet } from '../../models/task';
+import { ITask } from '../../models/task';
 
 export enum ETasksActions {
   LOAD_TASKS = '[TASKS] Load Tasks',
@@ -11,9 +11,9 @@ export enum ETasksActions {
   // ADD_TASK_SUCCESS = '[TASKS] Add Task Success',
   // ADD_TASK_FAIL = '[TASKS] Add Task Fail',
 
-  UPDATE_TASK = '[TASK] Update Task',
-  UPDATE_TASK_SUCCESS = '[TASK] Update Task Success',
-  UPDATE_TASK_FAIL = '[TASK] Update Task Fail'
+  UPDATE_TASKS = '[TASK] Update Tasks',
+  UPDATE_TASKS_SUCCESS = '[TASK] Update Tasks Success',
+  UPDATE_TASKS_FAIL = '[TASK] Update Tasks Fail'
 }
 
 export class LoadTasks implements Action {
@@ -35,29 +35,27 @@ export class LoadTasksFail implements Action {
 //   readonly type = ETasksActions.ADD_TASK;
 //   constructor(public payload: ITask) { }
 // }
-
 // export class AddTaskSuccess implements Action {
 //   readonly type = ETasksActions.ADD_TASK_SUCCESS;
 //   constructor(public payload: ITask) { }
 // }
-
 // export class AddTaskFail implements Action {
 //   readonly type = ETasksActions.ADD_TASK_FAIL;
 //   constructor(public payload: Error) { }
 // }
 
-export class UpdateTask implements Action {
-  readonly type = ETasksActions.UPDATE_TASK;
-  constructor(public payload: ITask) { }
+export class UpdateTasks implements Action {
+  readonly type = ETasksActions.UPDATE_TASKS;
+  constructor(public payload: ITask[]) { }
 }
 
-export class UpdateTaskSuccess implements Action {
-  readonly type = ETasksActions.UPDATE_TASK_SUCCESS;
-  constructor(public payload: ITask) { }
+export class UpdateTasksSuccess implements Action {
+  readonly type = ETasksActions.UPDATE_TASKS_SUCCESS;
+  constructor(public payload: ITask[]) { }
 }
 
-export class UpdateTaskFail implements Action {
-  readonly type = ETasksActions.UPDATE_TASK_FAIL;
+export class UpdateTasksFail implements Action {
+  readonly type = ETasksActions.UPDATE_TASKS_FAIL;
   constructor(public payload: Error) { }
 }
 
@@ -68,7 +66,7 @@ export type TasksActions =
   // | AddTask
   // | AddTaskSuccess
   // | AddTaskFail
-  | UpdateTask
-  | UpdateTaskSuccess
-  | UpdateTaskFail
+  | UpdateTasks
+  | UpdateTasksSuccess
+  | UpdateTasksFail
   ;

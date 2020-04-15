@@ -1,6 +1,5 @@
 export interface SettingsGet {
-  success: boolean;
-  data: ISettings;
+  data: string;
 }
 
 export interface ISettings {

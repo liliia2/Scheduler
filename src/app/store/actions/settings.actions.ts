@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { ISettings, SettingsGet } from '../../models/settings';
+import { ISettings } from '../../models/settings';
 
 export enum ESettingsActions {
   LOAD_SETTINGS = '[SETTINGS] Load Settings',

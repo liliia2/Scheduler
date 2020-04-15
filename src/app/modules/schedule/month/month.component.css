@@ -31,10 +31,10 @@
 }
 
 .date-block {
+    display: grid;
     min-width: 660px;
     height: 48px;
     width: 100%;
-    display: flex;
 }
 
 .date-block .day {
@@ -89,6 +89,7 @@
     margin: 0;
     size: 12;
     white-space: nowrap;
+    overflow: auto;
 }
 
 .drag-task {

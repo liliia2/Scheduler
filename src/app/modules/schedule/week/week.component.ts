@@ -1,4 +1,15 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+
+import { IAppState } from 'src/app/store/state/app.state';
+import { TaskModalComponent } from '../../../modals/task-modal/task-modal.component';
+import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-modal.component';
+import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
+import { ITask } from 'src/app/models/task';
+import { LoadTasks, UpdateTasks } from 'src/app/store/actions/tasks.actions';
+
 import * as moment from 'moment';
 
 @Component({
@@ -6,7 +17,8 @@ import * as moment from 'moment';
   templateUrl: './week.component.html',
   styleUrls: ['./week.component.css']
 })
-export class WeekComponent implements OnInit, OnChanges {
+export class WeekComponent implements OnInit, OnChanges, OnDestroy {
+  private subscription = new Subscription();
   @Input() selectedDay: Date;
   @Input() firstDayOfWeek: number;
   @Input() workingDays: Array<number>;
@@ -14,20 +26,79 @@ export class WeekComponent implements OnInit, OnChanges {
   @Input() endHour: string;
   @Input() timeInterval: number;
   @Input() displayOnlyWorkingDays: boolean;
+  @Input() checkedTypes: Array<string>;
+  @Input() checkedUsers: Array<number>;
   startWeek: Date;
   endWeek: Date;
   workingHours: Array<string>;
   displayedDays: Array<Date>;
-  numberOfSelectedDay: number | false;
+  numberOfSelectedDay: number;
+  allCeil: Array<any>;
+  allTasks: ITask[];
+  filtredTasks: ITask[];
+  showTaskInfoMode = false;
+  dragDropMode = false;
+  dragTask: {
+    'task': ITask,
+    'left': string;
+    'top': string;
+  };
 
-  constructor() {
+  constructor(
+    private store: Store<IAppState>,
+    public dialog: MatDialog
+  ) {
     this.getRange();
+    this.stopDragTask();
+    const tasksSub = this.store.select(selectTasksList).subscribe(result => {
+      if (result && !this.allTasks) {
+        this.allTasks = result; // добавить фильтр тасок по времени внутри запроса, простая сортировка по времени
+        this.allTasks = this.sortReceivedTask();
+        if (this.checkedTypes && this.checkedUsers) {
+          this.createSchedule();
+        }
+      }
+    });
+    this.subscription.add(tasksSub);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (!this.allTasks) { this.store.dispatch(new LoadTasks()); }
+  }
 
   ngOnChanges() {
     this.getRange();
+    if (this.allTasks) {
+      this.createSchedule();
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  sortReceivedTask(): ITask[] {
+    return this.allTasks.sort((a: any, b: any) => {
+      if (a.start > b.start) {
+        return 1;
+      }
+      if (a.start < b.start) {
+        return -1;
+      }
+      if (a.end > b.end) {
+        return 1;
+      }
+      if (a.end < b.end) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
+  createSchedule(): void {
+    this.filtredTasks = this.tasksFilterByUser();
+    this.allCeil = this.getAllCeil();
+    this.numberOfSelectedDay = this.getNumberOfSelectedDay();
   }
 
   getRange(): void {
@@ -44,6 +115,7 @@ export class WeekComponent implements OnInit, OnChanges {
       this.displayedDays = this.getDisplayedDays();
       this.numberOfSelectedDay = this.getNumberOfSelectedDay();
     }
+    this.store.dispatch(new LoadTasks());
   }
 
   getWorkingHours(): Array<string> {
@@ -55,7 +127,6 @@ export class WeekComponent implements OnInit, OnChanges {
       if (!moment(time).isBefore(end)) { continue; }
       arr.push(time.format('HH:mm'));
     } while (!moment(time).isSame(end, 'minute') && moment(time).isBefore(end));
-
     return arr;
   }
 
@@ -72,17 +143,128 @@ export class WeekComponent implements OnInit, OnChanges {
     } else { return arr; }
   }
 
+  getAllCeil(): any {
+    const ceils = [];
+    for (const day of this.displayedDays) {
+      const dateInUnix = moment(day).format('X');
+      let tasksArr = this.getTaskByDate(dateInUnix);
+      if (tasksArr.length) { tasksArr = this.getTaskPosition(tasksArr); console.log('tasksArr', tasksArr); }
+      ceils.push({
+        date: day,
+        tasks: tasksArr
+      });
+    }
+    return ceils;
+  }
+
+  getTaskPosition(tasks: any) {
+    const tasksWithPosition = [];
+    for (const item of tasks) {
+      const subcolumn = this.getSubcolumnCount(item, tasks);
+      const task = {
+        info: item,
+        rowStart: this.getRowStart(item),
+        rowEnd: this.getRowEnd(item),
+        subcolumn: subcolumn[1],
+        subcolumnStart: subcolumn[0],
+        subcolumnEnd: subcolumn[0] + 1
+      };
+      tasksWithPosition.push(task);
+    }
+    return tasksWithPosition;
+  }
+
+  getRowStart(task: ITask): number {
+    const startSheduleHour = moment(task.start, 'X').startOf('day')
+      .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
+      .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes');
+    return (moment(task.start, 'X').diff(startSheduleHour, 'minutes') / this.timeInterval) + 1;
+  }
+
+  getRowEnd(task: ITask): number {
+    const endSheduleHour = moment(task.end, 'X').startOf('day')
+      .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
+      .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes');
+    return (moment(task.end, 'X').diff(endSheduleHour, 'minutes') / this.timeInterval) + 1;
+  }
+
+  getSubcolumnCount(item: ITask, tasks: ITask[]): number[] {
+    if (tasks.length === 1) { return [0, 1]; }
+    const crossedTasks = tasks.filter(el =>
+      el.start === item.start ||
+      el.end === item.end ||
+      el.start < item.start && el.start > item.end ||
+      item.start < el.start && item.start > el.end
+    );
+    const subcolumnStart = crossedTasks.indexOf(item);
+    const subcolumnCount = crossedTasks.length;
+    return [subcolumnStart, subcolumnCount];
+  }
+
   getWorkingDays(days: Array<Date>): Array<Date> {
     return days.filter(el => this.workingDays.includes(moment(el).weekday()));
   }
 
-  getNumberOfSelectedDay(): number | false {
+  getNumberOfSelectedDay(): number {
     for (let i = 0; i < this.displayedDays.length; i++) {
       if (moment(this.selectedDay).isSame(this.displayedDays[i], 'day')) {
         return i;
       }
     }
-    return false;
+  }
+
+  getTaskByDate(date: string): ITask[] {
+    return this.filtredTasks.filter((task) => moment(task.start, 'X').startOf('day').format('X') === date);
+  }
+
+  tasksFilterByUser() {
+    const filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
+    return this.tasksFilterByType(filtredByUser);
+  }
+
+  tasksFilterByType(tasks: ITask[]): ITask[] {
+    return tasks.filter((task) => this.checkedTypes.includes(task.type));
+  }
+
+  stopDragTask() {
+    this.dragDropMode = false;
+    this.dragTask = {
+      task: null,
+      left: '',
+      top: ''
+    };
+  }
+
+  addNewTask(day?: Date, hour?: string) {
+    const start = hour;
+    const end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    if (!this.showTaskInfoMode) {
+      const dialogRef = this.dialog.open(TaskModalComponent, {
+        width: '540px',
+        data: {
+          start,
+          end,
+          day
+        },
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+      });
+    }
+  }
+
+  showTaskInfo(task: ITask) {
+    if (!this.dragDropMode) {
+      this.showTaskInfoMode = true;
+      const dialogRef = this.dialog.open(TaskInfoModalComponent, {
+        width: '540px',
+        data: task
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        this.showTaskInfoMode = false;
+      });
+    }
   }
 
 }

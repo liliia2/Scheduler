@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ISettings, SettingsGet } from '../models/settings';
 import { map } from 'rxjs/operators';
@@ -8,19 +8,29 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SettingsService {
+  key = '$2b$10$IvNEJpkMEyo3Zat95ohKdem5ykpjDaE523MDuAuQUN3aeW0QtuagS';
+
   constructor(private http: HttpClient) { }
 
-  getSettings(): Observable<ISettings> {
-    return this.http.get<ISettings>('http://localhost:3000/settings');
+  getSettings(): Observable<SettingsGet> {
+    const headers = new HttpHeaders().set('secret-key', this.key);
+    return this.http.get<SettingsGet>(
+      'https://api.jsonbin.io/b/5e9476a0e41a7f4da62c6f50/latest',
+      { headers }
+    );
   }
 
-  updateSettings(settings: ISettings): Observable<ISettings> {
-    const queryString = 'https://my-json-server.typicode.com/liliia2/typicode_db/settings';
+  updateSettings(settings: ISettings): Observable<SettingsGet> {
     const data = JSON.stringify(settings);
-    return this.http.post<any>(queryString, data).pipe(map((response) => {
-      console.log('response', response);
-      return response.data as ISettings;
-    })); 
+    const headers = new HttpHeaders().set('secret-key', this.key);
+    headers.set('Content-Type', 'application/json');
+    return this.http.put<any>(
+      'https://api.jsonbin.io/b/5e9476a0e41a7f4da62c6f50',
+      { data },
+      { headers }
+    ).pipe(map((response) => {
+        return response.data as SettingsGet;
+      }));
   }
 
 }

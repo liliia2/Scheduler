@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, Input } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -10,9 +10,10 @@ import { ITask } from '../../models/task';
 import { IAppState } from '../../store/state/app.state';
 import { selectSettings } from '../../store/selectors/settings.selector';
 import { selectUsersList } from '../../store/selectors/users.selector';
+import { UpdateTasks } from 'src/app/store/actions/tasks.actions';
 
 @Component({
-  selector: 'task-modal',
+  selector: 'app-task-modal',
   templateUrl: 'task-modal.component.html',
   styleUrls: ['./task-modal.component.css']
 })
@@ -31,7 +32,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   newTask: ITask;
   taskId: number;
   responsibleUser: IUser;
-  
+
   taskForm = new FormGroup({
     title: new FormControl(''),
     description: new FormControl(''),
@@ -65,14 +66,17 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     this.subscription.add(settingsSub);
     this.subscription.add(usersSub);
   }
-  
+
   ngOnInit() {
     if (this.data.id) {
-      // console.log('this.data', this.data);
       this.task = this.data;
       this.setTaskData();
-    } else if (this.data.taskStart) {
-      this.taskForm.get('day').setValue(this.data.taskStart);
+    } else if (this.data.start && this.data.end) {
+      this.taskForm.get('startTask').setValue(this.data.start);
+      this.taskForm.get('endTask').setValue(this.data.end);
+      this.taskForm.get('day').setValue(this.data.day);
+    } else if (this.data.day && !this.data.end) {
+      this.taskForm.get('day').setValue(this.data.day);
     }
   }
 
@@ -83,13 +87,15 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   setTaskData() {
     this.taskForm.get('title').setValue(this.task.title);
     this.taskForm.get('description').setValue(this.task.description);
-    this.taskForm.get('startTask').setValue(moment(this.task.taskStart, 'X').format('HH:mm'));
-    this.taskForm.get('endTask').setValue(moment(this.task.taskEnd, 'X').format('HH:mm'));
-    this.taskForm.get('day').setValue(moment(this.task.taskStart, 'X').toDate());
+    this.taskForm.get('startTask').setValue(moment(this.task.start, 'X').format('HH:mm'));
+    this.taskForm.get('endTask').setValue(moment(this.task.end, 'X').format('HH:mm'));
+    this.taskForm.get('day').setValue(moment(this.task.start, 'X').toDate());
     this.taskForm.get('type').setValue(this.task.type);
-    this.taskForm.get('responsibleUser').setValue(this.task.responsibleUser); 
-    // this.responsibleUser = this.task.responsibleUser;
-    // console.log('this.taskForm.get(responsibleUser)', this.taskForm.get('responsibleUser'));
+    this.taskForm.get('responsibleUser').setValue(this.task.responsibleUser);
+  }
+
+  compareFn(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
   getStartHours(start: string, end: string): Array<string> {
@@ -125,30 +131,31 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   }
 
   saveTask() {
-    // console.log(this.taskForm.get('responsibleUser'));
     this.newTask = {
       id: 5,
-      taskStart: Number(
+      start: Number(
         moment(this.taskForm.get('day').value)
         .add(this.taskForm.get('startTask').value.match(/^[0-9]+/)[0], 'hours')
         .add(this.taskForm.get('startTask').value.match(/[0-9]+$/)[0], 'minutes')
         .format('X')
       ),
-      taskEnd: Number(
+      end: Number(
         moment(this.taskForm.get('day').value)
         .add(this.taskForm.get('endTask').value.match(/^[0-9]+/)[0], 'hours')
         .add(this.taskForm.get('endTask').value.match(/[0-9]+$/)[0], 'minutes')
         .format('X')
       ),
+      day: Number(moment(this.taskForm.get('day').value).startOf('day').format('X')),
       type: this.taskForm.get('type').value,
       title: this.taskForm.get('title').value,
       description: this.taskForm.get('description').value,
       responsibleUser: this.taskForm.get('responsibleUser').value
-    }
+    };
+    // this.store.dispatch(new UpdateTasks(this.allTasks));
   }
 
-  onCancelClick():void {
+  onCancelClick(): void {
     this.dialogRef.close();
   }
-  
+
 }

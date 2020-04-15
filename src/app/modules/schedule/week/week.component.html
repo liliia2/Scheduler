@@ -1,4 +1,7 @@
-<div class="week-schedule-container">
+<div class="loading" *ngIf="!allCeil">
+    <h5>loading...</h5>
+</div>
+<div class="week-schedule-container" *ngIf="allCeil">
     <div class="selected-range">
         <h2>{{ displayedDays[0] | date: 'dd MMMM' }} - {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}</h2>
         <div class="btn">
@@ -19,15 +22,28 @@
                 <div
                     class="day"
                     *ngFor="let day of displayedDays; let i = index"
-                    [ngClass]="{selected: i === numberOfSelectedDay}">
+                    [ngClass]="{ selected: i === numberOfSelectedDay }">
                     <span>{{ day | date: 'EE, dd MMM' }}</span>
                 </div>
             </div>
             <div class="ceil-block">
-                <div class="day-in-ceil-block" *ngFor="let day of displayedDays; let i = index"
+                <div class="grid" *ngFor="let day of allCeil; let i = index"
                     [ngClass]="{ selected: i === numberOfSelectedDay }"
-                    [ngStyle]="{ 'grid-template-rows': 'repeat(' + workingHours.length + ', 1fr)' }">
-                    <div class="ceil" *ngFor="let hour of workingHours"></div>
+                    [ngStyle]="{
+                        'grid-template-rows': 'repeat(' + workingHours.length + ', 1fr)'
+                    }">
+                    <div class="day-in-ceil-block" *ngFor="let hour of workingHours">
+                        <div class="ceil" (click)="addNewTask(day, hour)"></div>
+                    </div>
+                    <!-- <div class="tasks-block"> -->
+                        <div class="task" *ngFor="let task of day.tasks"
+                            (click)="showTaskInfo(task.info)"
+                            [ngStyle]="{ 
+                                'grid-row': task.rowStart + '/' + task.rowEnd,
+                                'grid-column': task.subcolumnStart + '/' + task.subcolumnEnd }">
+                            <p>{{ task.info.title }}</p>
+                        </div>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>

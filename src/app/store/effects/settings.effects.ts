@@ -21,8 +21,12 @@ export class SettingsEffects {
     loadSettings$ = this.actions$.pipe(
         ofType<LoadSettings>(ESettingsActions.LOAD_SETTINGS),
         switchMap(() => this.settingsService.getSettings()),
-        switchMap((settings: ISettings) => {
-            return of(new LoadSettingsSuccess(settings));
+        switchMap((settings: SettingsGet) => {
+            const result = JSON.parse(settings.data);
+            return of(new LoadSettingsSuccess(result));
+        }),
+        catchError((error) => {
+            return of(new LoadSettingsFail(error));
         })
     );
 
@@ -31,12 +35,11 @@ export class SettingsEffects {
         ofType<UpdateSettings>(ESettingsActions.UPDATE_SETTINGS),
         switchMap(action => {
             return this.settingsService.updateSettings(action.payload).pipe(
-                mergeMap(x => {
-                    console.log('Update settings in effects', x);
-                    return of(new UpdateSettingsSuccess(x));
+                mergeMap((settings: SettingsGet) => {
+                    const result = JSON.parse(settings.data);
+                    return of(new UpdateSettingsSuccess(result));
                 }),
                 catchError((error) => {
-                    console.log('Update Error settings in effects', error);
                     return of(new UpdateSettingsFail(error));
                 })
             );

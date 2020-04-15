@@ -13,6 +13,8 @@ export class DayComponent implements OnInit, OnChanges {
   @Input() startHour: string;
   @Input() endHour: string;
   @Input() timeInterval: number;
+  @Input() checkedTypes: Array<string>;
+  @Input() checkedUsers: Array<number>;
   workingHours: Array<string>;
 
   constructor() { }

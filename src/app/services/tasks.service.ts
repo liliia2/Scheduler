@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -9,22 +9,28 @@ import { ITask, TasksGet } from '../models/task';
   providedIn: 'root'
 })
 export class TasksService {
+  key = '$2b$10$IvNEJpkMEyo3Zat95ohKdem5ykpjDaE523MDuAuQUN3aeW0QtuagS';
+
   constructor(private http: HttpClient) { }
 
-  getTasks(): Observable<ITask[]> {
-    // return this.http.get<ITask[]>('https://my-json-server.typicode.com/liliia2/typicode_db/tasks?task.tasksStart_start=1588086400&task.tasksStart_end=1592086600');
-    return this.http.get<ITask[]>('http://localhost:3000/tasks?task.tasksStart_start=1588086400&task.tasksStart_end=1592086600');
+  getTasks(): Observable<TasksGet> {
+    const headers = new HttpHeaders().set('secret-key', this.key);
+    return this.http.get<TasksGet>(
+      'https://api.jsonbin.io/b/5e9476631452b34da0fe89c4/latest',
+      { headers }
+    );
   }
 
-  updateTask(task: ITask): Observable<ITask> {
-    console.log('updateTask');
-    const queryString = 'https://my-json-server.typicode.com/liliia2/typicode_db/tasks/' + task.id;
-    const data = JSON.stringify(task);
-    console.log('data', data);
-    return this.http.post<any>(queryString, data).pipe(map((response) => {
-      console.log('response', response);
-      return response.data as ITask;
-    })); 
+  updateTasks(tasks: ITask[]): Observable<TasksGet> {
+    const data = JSON.stringify(tasks);
+    const headers = new HttpHeaders().set('secret-key', this.key);
+    return this.http.put<any>(
+      'https://api.jsonbin.io/b/5e9476631452b34da0fe89c4',
+      { data },
+      { headers }
+    ).pipe(map((response) => {
+      return response.data as TasksGet;
+    }));
   }
 
 }

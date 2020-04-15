@@ -17,8 +17,8 @@
             <mat-form-field class="interval-selector">
                 <mat-label>Select an interval for schedule</mat-label>
                 <mat-select [(value)]="timeInterval">
-                    <mat-option [value]=30>30</mat-option>
-                    <mat-option [value]=60>60</mat-option>
+                    <mat-option [value]=30>30 minutes</mat-option>
+                    <mat-option [value]=60>60 minutes</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
@@ -45,6 +45,8 @@
     <app-day
         class="schedule-day"
         *ngIf="selectedRange === ranges[0] && settings"
+        [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers"
         [selectedDay]="selectedDay"
         [firstDayOfWeek]="firstDayOfWeek"
         [workingDays]="workingDays"
@@ -55,6 +57,8 @@
     <app-week
         class="schedule-week"
         *ngIf="selectedRange === ranges[1] && settings"
+        [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers"
         [selectedDay]="selectedDay"
         [firstDayOfWeek]="firstDayOfWeek"
         [workingDays]="workingDays"
@@ -73,7 +77,6 @@
         [workingDays]="workingDays"
         [startHour]="startHour"
         [endHour]="endHour"
-        [displayOnlyWorkingDays]="displayOnlyWorkingDays"
-        [timeInterval]="timeInterval">
+        [displayOnlyWorkingDays]="displayOnlyWorkingDays">
     </app-month>
 </div>

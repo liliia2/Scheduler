@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as moment from 'moment';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -20,12 +20,12 @@ import { LoadSettings } from 'src/app/store/actions/settings.actions';
 export class ScheduleComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   ranges: Array<string> = ['Day', 'Week', 'Month'];
-  showAllTasksTypes: boolean = true;
+  showAllTasksTypes = true;
   types: Array<string> = ['All', 'Type1', 'Type2', 'Type3'];
   checkedTypes: Array<string> = ['All', 'Type1', 'Type2', 'Type3'];
   checkedUsers: Array<number> = [];
-  displayOnlyWorkingDays: boolean = false;
-  timeInterval: number = 30;
+  displayOnlyWorkingDays = false;
+  timeInterval = 60;
   today: Date;
   selectedRange: string;
   selectedDay: Date;

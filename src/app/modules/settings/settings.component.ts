@@ -33,7 +33,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     private store: Store<IAppState>
   ) {
     this.subscription = this.store.select(selectSettings).subscribe(result => {
-      if (result && !this.settings) {
+      if (
+          result && !this.settings ||
+          result && result !== this.settings
+        ) {
         this.settings = result;
         this.setValue();
       }
@@ -123,8 +126,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   saveSettings() {
+    if (!this.editMode) { return; }
     const newSettings = {
-      startWeek: this.startWeek,
+      startWeek: this.daysOfWeek.indexOf(this.firstWeekDay),
       workingDays: this.workingDays,
       startHour: this.startHour,
       endHour: this.endHour

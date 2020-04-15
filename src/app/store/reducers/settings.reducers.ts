@@ -25,6 +25,25 @@ export const settingsReducers = (
                 error: action.payload,
             };
         }
+        case ESettingsActions.UPDATE_SETTINGS: {
+            return {
+                ...state,
+                settings: null
+            };
+        }
+        case ESettingsActions.UPDATE_SETTINGS_SUCCESS: {
+            return {
+                ...state,
+                settings: action.payload,
+                loading: true
+            };
+        }
+        case ESettingsActions.UPDATE_SETTINGS_FAIL: {
+            return {
+                ...state,
+                error: action.payload,
+            };
+        }
         default:
             return state;
     }

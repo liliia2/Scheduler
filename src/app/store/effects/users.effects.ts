@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { switchMap, mergeMap, catchError } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { IUser, UsersGet } from '../../models/user';
+import { IUser } from '../../models/user';
 import { UsersService } from '../../services/users.service';
 import {
     EUsersActions,

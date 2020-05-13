@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { switchMap, mergeMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { ITask, TasksGet } from '../../models/task';
+import { TasksGet } from '../../models/task';
 import { TasksService } from '../../services/tasks.service';
 import {
     ETasksActions,
@@ -24,6 +24,9 @@ export class TasksEffects {
         switchMap((tasks: TasksGet) => {
             const result = JSON.parse(tasks.data);
             return of(new LoadTasksSuccess(result));
+        }),
+        catchError((error) => {
+            return of(new LoadTasksFail(error));
         })
     );
 

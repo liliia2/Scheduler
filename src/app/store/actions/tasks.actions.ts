@@ -7,10 +7,6 @@ export enum ETasksActions {
   LOAD_TASKS_SUCCESS = '[TASKS] Load Tasks Success',
   LOAD_TASKS_FAIL = '[TASKS] Load Tasks Fail',
 
-  // ADD_TASK = '[TASKS] Add Task',
-  // ADD_TASK_SUCCESS = '[TASKS] Add Task Success',
-  // ADD_TASK_FAIL = '[TASKS] Add Task Fail',
-
   UPDATE_TASKS = '[TASK] Update Tasks',
   UPDATE_TASKS_SUCCESS = '[TASK] Update Tasks Success',
   UPDATE_TASKS_FAIL = '[TASK] Update Tasks Fail'
@@ -31,19 +27,6 @@ export class LoadTasksFail implements Action {
   constructor(public payload: Error) { }
 }
 
-// export class AddTask implements Action {
-//   readonly type = ETasksActions.ADD_TASK;
-//   constructor(public payload: ITask) { }
-// }
-// export class AddTaskSuccess implements Action {
-//   readonly type = ETasksActions.ADD_TASK_SUCCESS;
-//   constructor(public payload: ITask) { }
-// }
-// export class AddTaskFail implements Action {
-//   readonly type = ETasksActions.ADD_TASK_FAIL;
-//   constructor(public payload: Error) { }
-// }
-
 export class UpdateTasks implements Action {
   readonly type = ETasksActions.UPDATE_TASKS;
   constructor(public payload: ITask[]) { }
@@ -63,10 +46,6 @@ export type TasksActions =
   | LoadTasks
   | LoadTasksSuccess
   | LoadTasksFail
-  // | AddTask
-  // | AddTaskSuccess
-  // | AddTaskFail
   | UpdateTasks
   | UpdateTasksSuccess
-  | UpdateTasksFail
-  ;
+  | UpdateTasksFail;

@@ -32,7 +32,8 @@
         <div class="responsible-user-filter">
             <h4>Check responsible user</h4>
             <section *ngFor="let user of users" class="checkbox">
-                <mat-checkbox [checked]="checkShowedUserFilter(user.id)" (change)="changeShowedUsersList(user.id)">{{ user.fullName }}</mat-checkbox>
+                <mat-checkbox [ngClass]="'color' + user.id"
+                    [checked]="checkShowedUserFilter(user.id)" (change)="changeShowedUsersList(user.id)">{{ user.fullName }}</mat-checkbox>
             </section>
         </div>
         <div class="type-filter">

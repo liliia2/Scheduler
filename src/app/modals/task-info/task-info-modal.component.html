@@ -15,7 +15,12 @@
     </div>
   </div>
   <div mat-dialog-actions>
-    <button mat-button (click)="onCancelClick()">Cancel</button>
-    <button mat-raised-button color="accent" [mat-dialog-close]="data.animal" (click)="editTask(task)">Edit</button>
+    <div class="delete-button">
+      <button mat-button color="warn" (click)="deleteTask()">Delete</button>
+    </div>
+    <div class="right-buttons">
+      <button mat-button (click)="onCancelClick()">Cancel</button>
+      <button mat-raised-button color="accent" (click)="editTask()">Edit</button>
+    </div>
   </div>
 </div>

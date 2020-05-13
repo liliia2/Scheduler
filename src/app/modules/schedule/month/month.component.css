@@ -17,6 +17,10 @@
     margin-right: 8px;
 }
 
+button {
+    width: 112px;
+}
+
 .table {
     height: calc(100% - 52px);
     width: 100%;

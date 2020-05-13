@@ -16,6 +16,19 @@
 }
 
 .mat-dialog-actions {
-    float: right;
     margin-right: 8px;
+    display: block;
+}
+
+.delete-button {
+    float: left;
+}
+
+.right-buttons {
+    right: 0;
+    float: right;
+}
+
+button {
+    width: 112px;
 }

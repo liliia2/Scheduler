@@ -8,7 +8,7 @@ import { TaskModalComponent } from '../../../modals/task-modal/task-modal.compon
 import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-modal.component';
 import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
 import { ITask } from 'src/app/models/task';
-import { LoadTasks, UpdateTasks } from 'src/app/store/actions/tasks.actions';
+import { LoadTasks } from 'src/app/store/actions/tasks.actions';
 
 import * as moment from 'moment';
 
@@ -33,7 +33,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
   workingHours: Array<string>;
   displayedDays: Array<Date>;
   numberOfSelectedDay: number;
-  allCeil: Array<any>;
+  allCell: Array<any>;
   allTasks: ITask[];
   filtredTasks: ITask[];
   showTaskInfoMode = false;
@@ -51,8 +51,8 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     this.getRange();
     this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
-      if (result && !this.allTasks) {
-        this.allTasks = result; // добавить фильтр тасок по времени внутри запроса, простая сортировка по времени
+      if (result && !this.allTasks || result && result !== this.allTasks) {
+        this.allTasks = result;
         this.allTasks = this.sortReceivedTask();
         if (this.checkedTypes && this.checkedUsers) {
           this.createSchedule();
@@ -97,7 +97,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
 
   createSchedule(): void {
     this.filtredTasks = this.tasksFilterByUser();
-    this.allCeil = this.getAllCeil();
+    this.allCell = this.getAllCell();
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
   }
 
@@ -143,49 +143,225 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     } else { return arr; }
   }
 
-  getAllCeil(): any {
-    const ceils = [];
-    for (const day of this.displayedDays) {
-      const dateInUnix = moment(day).format('X');
-      let tasksArr = this.getTaskByDate(dateInUnix);
-      if (tasksArr.length) { tasksArr = this.getTaskPosition(tasksArr); console.log('tasksArr', tasksArr); }
-      ceils.push({
-        date: day,
-        tasks: tasksArr
-      });
-    }
-    return ceils;
+  getAllCell(): any {
+    const emptyCells = this.getEmptyCells();
+    const cellsWithTasks = this.getFilledCells();
+    const cells = emptyCells.concat(cellsWithTasks);
+    console.log('cells', cells);
+    return cells;
   }
 
-  getTaskPosition(tasks: any) {
-    const tasksWithPosition = [];
-    for (const item of tasks) {
-      const subcolumn = this.getSubcolumnCount(item, tasks);
-      const task = {
-        info: item,
-        rowStart: this.getRowStart(item),
-        rowEnd: this.getRowEnd(item),
-        subcolumn: subcolumn[1],
-        subcolumnStart: subcolumn[0],
-        subcolumnEnd: subcolumn[0] + 1
-      };
-      tasksWithPosition.push(task);
+  getEmptyCells() {
+    const emptycells = [];
+    for (let i = 0; i < this.displayedDays.length; i++) {
+      const column = (i + 1) + ' / ' + (i + 2);
+      for (let j = 0; j < this.workingHours.length; j++) {
+        const row = (j + 1) + ' / ' + (j + 2);
+        const time = moment(this.displayedDays[i])
+          .add(moment(this.workingHours[j], 'HH:mm').format('HH'), 'hours')
+          .add(moment(this.workingHours[j], 'HH:mm').format('mm'), 'minutes')
+          .toDate();
+        emptycells.push({
+          column,
+          content: false,
+          row,
+          subgrid: false,
+          subcolumn: undefined,
+          subrow: undefined,
+          tasks: undefined,
+          time
+        });
+      }
     }
+    return emptycells;
+  }
+
+  getFilledCells() {
+    let filledCells = [];
+    for (const item of this.displayedDays) {
+      const dateInUnix = moment(item).format('X');
+      let tasksArr = this.getTaskByDate(dateInUnix);
+      if (!tasksArr.length) { continue; }
+      tasksArr = this.sortTasksByShedule(tasksArr);
+      filledCells = filledCells.concat(tasksArr);
+    }
+    return filledCells;
+  }
+
+  sortTasksByShedule(tasks: any) {
+    const startWork: Date = this.getStartSheduleHour(tasks[0].start).toDate();
+    const endWork: Date = this.getEndSheduleHour(tasks[0].end).toDate();
+    tasks = tasks.filter(item =>
+      moment(item.start, 'X').isBefore(endWork) ||
+      moment(item.end, 'X').isAfter(startWork)
+    );
+    tasks = this.setBaseTaskInfo(tasks);
+    tasks = this.getCrossedTasks(tasks);
+    let crossedTasks = tasks.filter(event => event.cross.length);
+    let uncrossedTasks = tasks.filter(event => !event.cross.length);
+    uncrossedTasks = uncrossedTasks.length ? this.sortUncrossedTasks(uncrossedTasks) : [];
+    crossedTasks = crossedTasks.length ? this.sortCrossedTasks(crossedTasks) : [];
+    const tasksWithPosition = uncrossedTasks.concat(crossedTasks);
+    // console.log('tasksWithPosition', tasksWithPosition);
     return tasksWithPosition;
   }
 
-  getRowStart(task: ITask): number {
-    const startSheduleHour = moment(task.start, 'X').startOf('day')
-      .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
-      .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes');
-    return (moment(task.start, 'X').diff(startSheduleHour, 'minutes') / this.timeInterval) + 1;
+  setBaseTaskInfo(tasks: ITask[]) {
+    const updTasks = [];
+    for (const element of tasks) {
+      const newItem = {
+        column: undefined,
+        content: true,
+        cross: [],
+        info: element,
+        row: undefined,
+        subgrid: false,
+        subcolumn: undefined,
+        subrow: undefined
+      };
+      updTasks.push(newItem);
+    }
+    return updTasks;
   }
 
-  getRowEnd(task: ITask): number {
-    const endSheduleHour = moment(task.end, 'X').startOf('day')
+  getCrossedTasks(tasks: any[]) {
+    const updTasks = tasks;
+    for (const itemI of updTasks) {
+      for (const itemJ of updTasks) {
+        if (itemI.info.id === itemJ.info.id) { continue; }
+        if (
+          moment(itemI.info.start).isBetween(itemJ.info.start, itemJ.info.end) ||
+          moment(itemI.info.end).isBetween(itemJ.info.start, itemJ.info.end) ||
+          moment(itemI.info.start, 'X').isSame(moment(itemJ.info.start, 'X'), 'minute')
+        ) {
+          itemI.cross.push(itemJ.info.id);
+          itemJ.cross.push(itemI.info.id);
+        }
+      }
+    }
+    return updTasks;
+  }
+
+  sortUncrossedTasks(uncrossedTasks: any[]) {
+    for (const element of uncrossedTasks) {
+      const col = this.getColumnPosition(element.info.day);
+      element.column = col + '/' + (col + 1);
+      element.row = this.getRowStart(element.info.start) + '/' + this.getRowEnd(element.info.end);
+    }
+    return uncrossedTasks;
+  }
+
+  sortCrossedTasks(crossedTasks: any[]) {
+    const updTasks = [];
+
+    if (crossedTasks.length) {
+      let group = [];
+      let indexesOfGroup = [];
+      let groupStartTime: number;
+      let groupEndTime: number;
+      const startWork = +(this.getStartSheduleHour(crossedTasks[0].start).format('X'));
+      const endWork = +(this.getEndSheduleHour(crossedTasks[0].end).format('X'));
+      for (const element of crossedTasks) {
+        element.cross = [...new Set(element.cross)];
+      }
+      for (let i = 0; i <= crossedTasks.length; i++) {
+        if (i !== 0 && i !== crossedTasks.length && indexesOfGroup.includes(crossedTasks[i].info.id)) {
+          group.push(crossedTasks[i]);
+          indexesOfGroup = indexesOfGroup.concat(crossedTasks[i].cross);
+          if (groupEndTime < crossedTasks[i].info.end) { groupEndTime = crossedTasks[i].info.end; }
+        } else {
+          if (i !== 0 || i === crossedTasks.length) {
+            const col = this.getColumnPosition(groupStartTime);
+            groupStartTime = (groupStartTime < startWork) ? startWork : groupStartTime;
+            groupEndTime = (groupEndTime > endWork) ? endWork : groupEndTime;
+            let countCrossEl = 0;
+            for (const index of indexesOfGroup) {
+              const count = indexesOfGroup.filter(el => el === index).length;
+              if (count > countCrossEl) { countCrossEl = count; }
+            }
+            let subgridColumnValue = Math.round(indexesOfGroup.length / countCrossEl);
+            subgridColumnValue = (subgridColumnValue < countCrossEl) ? countCrossEl : subgridColumnValue;
+            const subgridRowValue: number = Math.ceil(this.getDifferentInMin(groupStartTime, groupEndTime) / this.timeInterval);
+            const eventGroup = {
+              groupStartTime,
+              content: true,
+              column: col + '/' + (col + 1),
+              row: this.getRowStart(groupStartTime) + '/' + this.getRowEnd(groupEndTime),
+              tasks: group,
+              subgrid: true,
+              subgridColumn: subgridColumnValue,
+              subgridRow: subgridRowValue
+            };
+            updTasks.push(eventGroup);
+          }
+
+          if (i !== crossedTasks.length) {
+            groupStartTime = crossedTasks[i].info.start;
+            groupEndTime = crossedTasks[i].info.end;
+            group = [crossedTasks[i]];
+            indexesOfGroup = crossedTasks[i].cross;
+          }
+        }
+      }
+    }
+
+    for (const item of updTasks) {
+      for (let i = 0; i < item.tasks.length; i++) {
+        let columnStart = i + 1;
+        if (columnStart > item.subgridColumn) {
+          columnStart = columnStart % item.subgridColumn;
+        }
+        const columnEnd = columnStart + 1;
+        let itemStart = item.groupStartTime;
+        let itemEnd = item.tasks[i].info.end;
+        itemStart = (itemStart > item.tasks[i].info.start) ? item.tasks[i].info.start : itemStart;
+        itemEnd = (itemEnd > item.tasks[i].info.end) ? item.tasks[i].info.end : itemEnd;
+        item.tasks[i].column = columnStart + '/' + columnEnd;
+        item.tasks[i].row = this.getRowStart(item.tasks[i].info.start, itemStart) + '/' + this.getRowEnd(item.tasks[i].info.end, itemStart);
+      }
+    }
+
+    return updTasks;
+  }
+
+  getDifferentInMin(start: number, end: number): number {
+    return moment(end, 'X').diff(moment(start, 'X'), 'minutes');
+  }
+
+  getColumnPosition(day: number) {
+    for (let i = 0; i < this.displayedDays.length; i++) {
+      if (moment(this.displayedDays[i]).isSame(moment(day, 'X').toDate(), 'day')) {
+        return ++i;
+      }
+    }
+  }
+
+  getRowStart(start: number, itemStart?: number): number {
+    const startBlock = itemStart ? itemStart : this.getStartSheduleHour(start);
+    return Math.ceil((
+      moment(start, 'X')
+      .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
+    );
+  }
+
+  getRowEnd(end: number, itemStart?: number): number {
+    const startBlock = itemStart ? itemStart : this.getStartSheduleHour(end);
+    return Math.ceil((
+      moment(end, 'X')
+      .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
+    );
+  }
+
+  getStartSheduleHour(time: number) {
+    return moment(time, 'X').startOf('day')
       .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
       .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes');
-    return (moment(task.end, 'X').diff(endSheduleHour, 'minutes') / this.timeInterval) + 1;
+  }
+
+  getEndSheduleHour(time: number) {
+    return moment(time, 'X').startOf('day')
+      .add(moment(this.endHour, 'HH:mm').format('HH'), 'hours')
+      .add(moment(this.endHour, 'HH:mm').format('mm'), 'minutes');
   }
 
   getSubcolumnCount(item: ITask, tasks: ITask[]): number[] {
@@ -235,20 +411,17 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  addNewTask(day?: Date, hour?: string) {
-    const start = hour;
+  addNewTask(day?: Date) {
+    const start = moment(day).format('HH:mm');
     const end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
     if (!this.showTaskInfoMode) {
-      const dialogRef = this.dialog.open(TaskModalComponent, {
+      this.dialog.open(TaskModalComponent, {
         width: '540px',
-        data: {
+        data: [this.allTasks, {
           start,
           end,
           day
-        },
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
+        }],
       });
     }
   }
@@ -258,10 +431,9 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
       this.showTaskInfoMode = true;
       const dialogRef = this.dialog.open(TaskInfoModalComponent, {
         width: '540px',
-        data: task
+        data: [this.allTasks, task.id]
       });
       dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
         this.showTaskInfoMode = false;
       });
     }

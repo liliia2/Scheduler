@@ -1,4 +1,4 @@
-import { ITask, TasksGet } from 'src/app/models/task';
+import { ITask } from 'src/app/models/task';
 
 export interface ITasksState {
     tasks: ITask[];

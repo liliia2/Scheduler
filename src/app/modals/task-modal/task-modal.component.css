@@ -23,3 +23,7 @@
     float: right;
     margin-right: 8px;
 }
+
+button {
+    width: 112px;
+}

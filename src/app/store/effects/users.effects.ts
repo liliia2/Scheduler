@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { IUser } from '../../models/user';
@@ -20,6 +20,9 @@ export class UsersEffects {
         switchMap(() => this.usersService.getUsers()),
         switchMap((users: IUser[]) => {
             return of(new LoadUsersSuccess(users));
+        }),
+        catchError((error) => {
+            return of(new LoadUsersFail(error));
         })
     );
 

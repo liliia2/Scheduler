@@ -1,9 +1,10 @@
-<div class="loading" *ngIf="!allCeil">
+<div class="loading" *ngIf="!allCell">
     <h5>loading...</h5>
 </div>
-<div class="week-schedule-container" *ngIf="allCeil">
+<div class="week-schedule-container" *ngIf="allCell">
     <div class="selected-range">
-        <h2>{{ displayedDays[0] | date: 'dd MMMM' }} - {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}</h2>
+        <h2>{{ displayedDays[0] | date: 'dd MMMM' }} -
+            {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}</h2>
         <div class="btn">
             <button mat-raised-button color="accent" (click)="addNewTask()">New task</button>
         </div>
@@ -19,31 +20,44 @@
         </div>
         <div class="schedule">
             <div class="date-block">
-                <div
-                    class="day"
-                    *ngFor="let day of displayedDays; let i = index"
+                <div class="day" *ngFor="let day of displayedDays; let i = index"
                     [ngClass]="{ selected: i === numberOfSelectedDay }">
                     <span>{{ day | date: 'EE, dd MMM' }}</span>
                 </div>
             </div>
-            <div class="ceil-block">
-                <div class="grid" *ngFor="let day of allCeil; let i = index"
-                    [ngClass]="{ selected: i === numberOfSelectedDay }"
-                    [ngStyle]="{
-                        'grid-template-rows': 'repeat(' + workingHours.length + ', 1fr)'
-                    }">
-                    <div class="day-in-ceil-block" *ngFor="let hour of workingHours">
-                        <div class="ceil" (click)="addNewTask(day, hour)"></div>
-                    </div>
-                    <!-- <div class="tasks-block"> -->
-                        <div class="task" *ngFor="let task of day.tasks"
-                            (click)="showTaskInfo(task.info)"
-                            [ngStyle]="{ 
-                                'grid-row': task.rowStart + '/' + task.rowEnd,
-                                'grid-column': task.subcolumnStart + '/' + task.subcolumnEnd }">
-                            <p>{{ task.info.title }}</p>
+            <div class="cell-block" [ngStyle]="{
+                    'grid-template-columns': 'repeat(' + displayedDays.length + ', 1fr)',
+                    'grid-template-rows': 'repeat(' + workingHours.length + ', ' + 60 / timeInterval + 'fr)'
+                }">
+                <div *ngFor="let cell of allCell; let i = index" class="cell" [ngClass]="
+                        i / workingHours.length >= numberOfSelectedDay &&
+                        i / workingHours.length < numberOfSelectedDay + 1 ?
+                        'cell selected' :
+                        'cell'
+                    " (click)="addNewTask(cell.time)" [ngStyle]="{ 'grid-column': cell.column, 'grid-row': cell.row }">
+                    <div *ngIf="cell.content" [ngStyle]="{ 'height': '100%' }">
+                        <div *ngIf="!cell.subgrid; else tasksBlock" (click)="showTaskInfo(cell.info)"
+                            [ngClass]="'task color' + cell.info.responsibleUser.id">
+                            <p class="task-title">{{ cell.info.title }}</p>
+                            <p>{{ cell.info.description }}</p>
                         </div>
-                    <!-- </div> -->
+                        <ng-template #tasksBlock>
+                            <div [ngStyle]="{
+                                    'grid-template-columns': 'repeat(' + cell.subgridColumn + ', minmax(16px, auto))',
+                                    'grid-template-rows': 'repeat(' + cell.subgridRow + ', ' + 60 / timeInterval + 'fr)',
+                                    'display': 'grid',
+                                    'height': '100%'
+                                }">
+                                <div *ngFor="let task of cell.tasks"
+                                    [ngClass]="'task color' + task.info.responsibleUser.id"
+                                    (click)="showTaskInfo(task.info)"
+                                    [ngStyle]="{ 'grid-column': task.column, 'grid-row': task.row }">
+                                    <p class="task-title">{{ task.info.title }}</p>
+                                    <p>{{ task.info.description }}</p>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
             </div>
         </div>

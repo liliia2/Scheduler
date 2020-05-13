@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+// import { Component, OnInit, OnDestroy, SimpleChanges, DoCheck, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -11,13 +12,16 @@ import { IUser } from 'src/app/models/user';
 import { ISettings } from 'src/app/models/settings';
 import { LoadUsers } from 'src/app/store/actions/users.actions';
 import { LoadSettings } from 'src/app/store/actions/settings.actions';
+import { MatCalendar } from '@angular/material';
 
 @Component({
   selector: 'app-schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.css']
 })
+// export class ScheduleComponent implements OnInit, DoCheck, OnDestroy {
 export class ScheduleComponent implements OnInit, OnDestroy {
+    // @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   private subscription = new Subscription();
   ranges: Array<string> = ['Day', 'Week', 'Month'];
   showAllTasksTypes = true;
@@ -42,7 +46,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   ) {
     this.today = moment().startOf('day').toDate();
     this.selectedDay = this.today;
-    this.selectedRange = this.ranges[2];
+    this.selectedRange = this.ranges[1];
     const usersSub = this.store.select(selectUsersList).subscribe(result => {
       if (result && !this.users) {
         this.users = result;
@@ -63,6 +67,10 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     if (!this.users) { this.store.dispatch(new LoadUsers()); }
     if (!this.settings) { this.store.dispatch(new LoadSettings()); }
   }
+
+  // ngDoCheck() {
+  //   console.log('Hi');
+  // }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

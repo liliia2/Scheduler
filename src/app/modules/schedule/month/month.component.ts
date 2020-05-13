@@ -9,7 +9,6 @@ import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-moda
 import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
 import { ITask } from 'src/app/models/task';
 import { LoadTasks, UpdateTasks } from 'src/app/store/actions/tasks.actions';
-import { TasksEffects } from 'src/app/store/effects/tasks.effects';
 
 import * as moment from 'moment';
 
@@ -47,7 +46,6 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private store: Store<IAppState>,
-    private tasksEffects: TasksEffects,
     public dialog: MatDialog
   ) {
     this.getRange();
@@ -206,10 +204,9 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
       this.showTaskInfoMode = true;
       const dialogRef = this.dialog.open(TaskInfoModalComponent, {
         width: '540px',
-        data: task
+        data: [this.allTasks, task.id]
       });
       dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
         this.showTaskInfoMode = false;
       });
     }
@@ -217,14 +214,9 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   addNewTask(day?: Date) {
     if (!this.showTaskInfoMode) {
-      const dialogRef = this.dialog.open(TaskModalComponent, {
+      this.dialog.open(TaskModalComponent, {
         width: '540px',
-        data: {
-          day
-        },
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
+        data: [this.allTasks, day],
       });
     }
   }

@@ -39,6 +39,10 @@
     margin: -8px 0 0 0;
 }
 
+::ng-deep .mat-calendar-body-today.mat-calendar-body-selected {
+    background-color: #1b76d2 !important;
+}
+
 .type-filter, .responsible-user-filter {
     width: 240px;
     margin: 8px 16px 16px;
@@ -50,6 +54,21 @@
 
 section.checkbox {
     margin: 4px 0;
+}
+
+::ng-deep .color1.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+::ng-deep .color1.mat-checkbox-indeterminate .mat-checkbox-background {
+    background-color: #ff40d6 !important;
+}
+
+::ng-deep .color2.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+::ng-deep .color2.mat-checkbox-indeterminate .mat-checkbox-background {
+    background-color: #1976d2 !important;
+}
+
+::ng-deep .color3.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+::ng-deep .color3.mat-checkbox-indeterminate .mat-checkbox-background {
+    background-color: #10bd8f !important;
 }
 
 .schedule-day, .schedule-week, .schedule-month {

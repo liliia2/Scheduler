@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { switchMap, mergeMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
-import { ISettings, SettingsGet } from '../../models/settings';
+import { SettingsGet } from '../../models/settings';
 import { SettingsService } from '../../services/setting.service';
 import {
     ESettingsActions,

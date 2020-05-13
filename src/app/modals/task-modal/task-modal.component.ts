@@ -29,7 +29,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   varStartHours: Array<string>;
   varEndHours: Array<string>;
   task: ITask;
-  newTask: ITask;
+  allTasks: ITask[];
   taskId: number;
   responsibleUser: IUser;
 
@@ -48,8 +48,20 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<TaskModalComponent>,
     private store: Store<IAppState>,
-    @Inject(MAT_DIALOG_DATA) public data: ITask
+    @Inject(MAT_DIALOG_DATA) public data: [ITask[], any]
   ) {
+      this.addSubscr();
+  }
+
+  ngOnInit() {
+    this.setStartData();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  addSubscr() {
     const settingsSub = this.store.select(selectSettings).subscribe(result => {
       if (result) {
         this.startHour = result.startHour;
@@ -67,21 +79,22 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     this.subscription.add(usersSub);
   }
 
-  ngOnInit() {
-    if (this.data.id) {
-      this.task = this.data;
+  setStartData() {
+    if (!this.data[1]) {
+      this.allTasks = this.data[0];
+    } else if (typeof this.data[1] === 'number') {
+      this.allTasks = this.data[0];
+      this.task = this.data[0].filter(el => el.id === this.data[1])[0];
       this.setTaskData();
-    } else if (this.data.start && this.data.end) {
-      this.taskForm.get('startTask').setValue(this.data.start);
-      this.taskForm.get('endTask').setValue(this.data.end);
-      this.taskForm.get('day').setValue(this.data.day);
-    } else if (this.data.day && !this.data.end) {
-      this.taskForm.get('day').setValue(this.data.day);
+    } else if (!this.data[1].start && !this.data[1].end) {
+      this.allTasks = this.data[0];
+      this.taskForm.get('day').setValue(this.data[1]);
+    } else {
+      this.allTasks = this.data[0];
+      this.taskForm.get('startTask').setValue(this.data[1].start);
+      this.taskForm.get('endTask').setValue(this.data[1].end);
+      this.taskForm.get('day').setValue(this.data[1].day);
     }
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   setTaskData() {
@@ -131,16 +144,26 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   }
 
   saveTask() {
-    this.newTask = {
-      id: 5,
+    const task = this.getTaskData();
+    const updTasksList = this.getUpdTasksList(task);
+    this.store.dispatch(new UpdateTasks(updTasksList));
+    this.onCancelClick();
+  }
+
+  getTaskData(): ITask {
+    const taskId = this.getTaskId();
+    const newTask = {
+      id: taskId,
       start: Number(
         moment(this.taskForm.get('day').value)
+        .startOf('day')
         .add(this.taskForm.get('startTask').value.match(/^[0-9]+/)[0], 'hours')
         .add(this.taskForm.get('startTask').value.match(/[0-9]+$/)[0], 'minutes')
         .format('X')
       ),
       end: Number(
         moment(this.taskForm.get('day').value)
+        .startOf('day')
         .add(this.taskForm.get('endTask').value.match(/^[0-9]+/)[0], 'hours')
         .add(this.taskForm.get('endTask').value.match(/[0-9]+$/)[0], 'minutes')
         .format('X')
@@ -151,7 +174,29 @@ export class TaskModalComponent implements OnInit, OnDestroy {
       description: this.taskForm.get('description').value,
       responsibleUser: this.taskForm.get('responsibleUser').value
     };
-    // this.store.dispatch(new UpdateTasks(this.allTasks));
+    return newTask;
+  }
+
+  getUpdTasksList(task: ITask): ITask[] {
+    let tasksList = [];
+    tasksList = this.allTasks
+      .filter(el => el.id !== task.id)
+      .concat(task);
+    return tasksList;
+  }
+
+  getTaskId(): number {
+    if (this.data[1] && typeof this.data[1] === 'number') {
+      return this.data[1];
+    }
+    let id: number;
+    this.allTasks.forEach(element => {
+      if (!id) { id = element.id;
+      } else if (id <= element.id) {
+        id = element.id + 1;
+      }
+    });
+    return id;
   }
 
   onCancelClick(): void {

@@ -1,7 +1,12 @@
 <div class="loading" *ngIf="!allCell">
     <h5>loading...</h5>
 </div>
-<div class="week-schedule-container" *ngIf="allCell">
+<div class="week-schedule-container" *ngIf="allCell" (click)="dragDropMode && stopDragTask()"
+    (mousemove)="dragTask.task && getTaskPosition($event)">
+    <div class="drag-task" *ngIf="dragDropMode && dragTask.top"
+        [ngStyle]="dragTask.task && { 'left': dragTask.left, 'top': dragTask.top }">
+        <p>{{ dragTask.task.title }}</p>
+    </div>
     <div class="selected-range">
         <h2>{{ displayedDays[0] | date: 'dd MMMM' }} -
             {{ displayedDays[displayedDays.length - 1] | date: 'dd MMMM, yyyy' }}</h2>
@@ -32,25 +37,27 @@
                 <div *ngFor="let cell of allCell; let i = index" class="cell" [ngClass]="
                         i / workingHours.length >= numberOfSelectedDay &&
                         i / workingHours.length < numberOfSelectedDay + 1 ?
-                        'cell selected' :
-                        'cell'
-                    " (click)="addNewTask(cell.time)" [ngStyle]="{ 'grid-column': cell.column, 'grid-row': cell.row }">
-                    <div *ngIf="cell.content" [ngStyle]="{ 'height': '100%' }">
-                        <div *ngIf="!cell.subgrid; else tasksBlock" (click)="showTaskInfo(cell.info)"
+                        'cell selected' : 'cell'" (click)="addNewTask(cell.time)"
+                    (mouseup)="dragDropMode && updateTask(cell.time)"
+                    [ngStyle]="{ 'grid-column': cell.column, 'grid-row': cell.row }">
+                    <div class="place-for-task" *ngIf="dragDropMode && cell.time"></div>
+                    <div *ngIf="cell.content" class="cell-with-content">
+                        <div *ngIf="!cell.subgrid; else taskBlock"
+                            (click)="showTaskInfo(cell.info)"
+                            (mousedown)="!showTaskInfoMode && cell.content && tapTask(cell.info)"
                             [ngClass]="'task color' + cell.info.responsibleUser.id">
                             <p class="task-title">{{ cell.info.title }}</p>
                             <p>{{ cell.info.description }}</p>
                         </div>
-                        <ng-template #tasksBlock>
-                            <div [ngStyle]="{
+                        <ng-template #taskBlock>
+                            <div class="task-block" [ngStyle]="{
                                     'grid-template-columns': 'repeat(' + cell.subgridColumn + ', minmax(16px, auto))',
-                                    'grid-template-rows': 'repeat(' + cell.subgridRow + ', ' + 60 / timeInterval + 'fr)',
-                                    'display': 'grid',
-                                    'height': '100%'
+                                    'grid-template-rows': 'repeat(' + cell.subgridRow + ', ' + 60 / timeInterval + 'fr)'
                                 }">
                                 <div *ngFor="let task of cell.tasks"
                                     [ngClass]="'task color' + task.info.responsibleUser.id"
                                     (click)="showTaskInfo(task.info)"
+                                    (mousedown)="!showTaskInfoMode && task && tapTask(task.info)"
                                     [ngStyle]="{ 'grid-column': task.column, 'grid-row': task.row }">
                                     <p class="task-title">{{ task.info.title }}</p>
                                     <p>{{ task.info.description }}</p>

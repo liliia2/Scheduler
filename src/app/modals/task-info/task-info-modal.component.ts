@@ -1,12 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
 import * as moment from 'moment';
 
-import { IAppState } from '../../store/state/app.state';
 import { ITask } from '../../models/task';
 import { TaskModalComponent } from '../task-modal/task-modal.component';
-import { UpdateTasks } from 'src/app/store/actions/tasks.actions';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-task-info-modal',
@@ -22,7 +20,6 @@ export class TaskInfoModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<TaskInfoModalComponent>,
     public dialog: MatDialog,
-    private store: Store<IAppState>,
     @Inject(MAT_DIALOG_DATA) public data: [ITask[], number]
   ) { }
 
@@ -39,12 +36,15 @@ export class TaskInfoModalComponent implements OnInit {
   }
 
   deleteTask() {
-    const updTasksList = this.allTasks.filter((el) => el.id !== this.task.id);
-    this.store.dispatch(new UpdateTasks(updTasksList));
-    this.onCancelClick();
+    this.dialogRef.close(TaskInfoModalComponent);
+    this.dialog.open(ConfirmModalComponent, {
+      width: '390px',
+      data: [this.allTasks, this.task.id]
+    });
   }
 
   editTask() {
+    this.dialogRef.close(TaskInfoModalComponent);
     this.dialog.open(TaskModalComponent, {
       width: '540px',
       data: [this.allTasks, this.task.id]

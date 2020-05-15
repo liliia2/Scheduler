@@ -27,6 +27,7 @@ import { SettingsComponent } from './modules/settings/settings.component';
 import { ScheduleComponent } from './modules/schedule/schedule.component';
 import { TaskModalComponent } from './modals/task-modal/task-modal.component';
 import { TaskInfoModalComponent } from './modals/task-info/task-info-modal.component';
+import { ConfirmModalComponent } from './modals/confirm-modal/confirm-modal.component';
 import { WeekComponent } from './modules/schedule/week/week.component';
 
 import { SettingsEffects } from './store/effects/settings.effects';
@@ -39,6 +40,7 @@ import { usersReducers } from './store/reducers/users.reducers';
 @NgModule({
   declarations: [
     AppComponent,
+    ConfirmModalComponent,
     DayComponent,
     HeaderComponent,
     MonthComponent,
@@ -77,10 +79,13 @@ import { usersReducers } from './store/reducers/users.reducers';
     ])
   ],
   exports: [],
-  entryComponents: [ TaskModalComponent, TaskInfoModalComponent ],
+  entryComponents: [ConfirmModalComponent,  TaskModalComponent, TaskInfoModalComponent ],
   providers: [
     {
       provide: DateAdapter, useClass: CustomDateAdapter
+    },
+    {
+      provide: ConfirmModalComponent, useClass: ConfirmModalComponent
     },
     {
       provide: TaskModalComponent, useClass: TaskModalComponent

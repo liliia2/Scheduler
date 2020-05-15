@@ -33,6 +33,15 @@ button {
     width: 112px;
 }
 
+button:hover {
+    background-color: #ff246d;
+    box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+button:active {
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
 .selected-range h2 {
     padding-left: 56px;
 }
@@ -66,6 +75,9 @@ button {
 .schedule {
     height: 100%;
     width: calc(100% - 56px);
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none; 
 }
 
 .date-block {
@@ -95,18 +107,6 @@ button {
     height: calc(100% - 56px);
 }
 
-/* .grid {
-    width: 100%;
-    height: 100%;
-    display: grid;
-} */
-
-/* .grid {
-    width: 100%;
-    height: 100%;
-    display: grid;
-} */
-
 .cell-block .cell {
     margin: auto;
     border-top: 1px solid rgba(235, 235, 235, 0.4);
@@ -116,14 +116,14 @@ button {
     text-align: center;
 }
 
-/* .tasks-block {
-    position: absolute; */
-    /* width: 100%;
-    height: 100%; */
-    /* display: grid;
-    height: calc(100% - 164px);
-    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); */
-/* } */
+.cell-with-content {
+    height: 100%;
+}
+
+.task-block {
+    display: grid;
+    height: 100%;
+}
 
 .task {
     background-color: #10bd8f;
@@ -132,6 +132,7 @@ button {
     margin: 2px;
     height: calc(100% - 3px);
     text-align: left;
+    overflow: hidden;
 }
 
 .color1 {
@@ -147,13 +148,45 @@ button {
 }
 
 .task p {
-    padding: 2px 4px;
-    margin: 0;
-    size: 12;
-    white-space: nowrap;
-    overflow: auto;
+    padding: 0 2px;
+    margin: 2px;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .task-title {
     font-weight: 700;
+}
+
+.drag-task p {
+    padding: 4px;
+    margin: 0;
+    size: 12;
+    white-space: nowrap;
+    overflow: auto;
+    white-space: inherit;
+}
+
+.drag-task {
+    background-color: #10bd8f;
+    border-radius: 4px;
+    color: white;
+    width: 100px;
+    height: 75px;
+    text-align: left;
+    margin: 2px;
+    position: absolute;
+}
+
+.place-for-task {
+    margin: 2px;
+    height: 24px;
+    width: 1px;
+    background-color: rgba(93, 125, 255, 0.5);
+    display: none;
+}
+
+.cell:hover .place-for-task {
+    display: block;
 }

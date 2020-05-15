@@ -33,7 +33,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
   displayedDays: Array<Date>;
   numberOfSelectedDay: number;
   weekDaysArr: Array<string>;
-  allCeil: Array<any>;
+  allCell: Array<any>;
   allTasks: ITask[];
   filtredTasks: ITask[];
   showTaskInfoMode = false;
@@ -78,7 +78,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   createSchedule() {
     this.filtredTasks = this.tasksFilterByUser();
-    this.allCeil = this.getAllCeil();
+    this.allCell = this.getAllCell();
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
     this.weekDaysArr = this.getWeekDaysArr();
   }
@@ -104,7 +104,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     } else { return arr; }
   }
 
-  getAllCeil(): any {
+  getAllCell(): any {
     const ceils = [];
     let j = this.firstDayOfWeek;
     while (j % 7 !== moment(this.displayedDays[0]).weekday() % 7) {
@@ -136,8 +136,8 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
 
   getNumberOfSelectedDay(): number {
     if (moment(this.displayedDays[0]).isSame(this.selectedDay, 'month')) {
-      for (let i = 0; i < this.allCeil.length; i++) {
-        if (this.allCeil[i].date && moment(this.selectedDay).isSame(this.allCeil[i].date, 'day')) {
+      for (let i = 0; i < this.allCell.length; i++) {
+        if (this.allCell[i].date && moment(this.selectedDay).isSame(this.allCell[i].date, 'day')) {
           return i;
         }
       }

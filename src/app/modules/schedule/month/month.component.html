@@ -23,13 +23,13 @@
                     <span>{{ dayOfWeek }}</span>
                 </div>
             </div>
-            <div class="ceil-block"
+            <div class="cell-block"
                 [ngStyle]="{ 'grid-template-columns': 'repeat(' + weekDaysArr.length + ', minmax(90px, 1fr))' }">
-                <div class="day-in-ceil-block"
-                    *ngFor="let day of allCeil; let i = index"
+                <div class="day-in-cell-block"
+                    *ngFor="let day of allCell; let i = index"
                     (mouseup)="dragDropMode && updateTask(day.date)"
                     [ngClass]="{ selected: i === numberOfSelectedDay }">
-                    <div class="ceil" (click)="day.date && addNewTask(day.date)">
+                    <div class="cell" (click)="day.date && addNewTask(day.date)">
                         <p *ngIf="day.date; else elseBlock">
                             {{ day.date | date: 'd MMM' }}
                         </p>

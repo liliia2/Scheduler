@@ -2,11 +2,6 @@
     margin: 0 0 8px;
 }
 
-.task-time {
-    color: rgb(130, 130, 130);
-    margin-bottom: 24px;
-}
-
 .bolder {
     font-weight: 600;
 }
@@ -15,22 +10,9 @@
     line-height: 1.5em;
 }
 
-p {
-    margin: 4px 0;
-}
-
 .mat-dialog-actions {
-    margin-top: 12px;
     margin-right: 8px;
-    display: block;
-}
-
-.delete-button {
-    float: left;
-}
-
-.right-buttons {
-    right: 0;
+    display: flex;
     float: right;
 }
 

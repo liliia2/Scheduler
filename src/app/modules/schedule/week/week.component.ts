@@ -8,7 +8,7 @@ import { TaskModalComponent } from '../../../modals/task-modal/task-modal.compon
 import { TaskInfoModalComponent } from '../../../modals/task-info/task-info-modal.component';
 import { selectTasksList } from 'src/app/store/selectors/tasks.selector';
 import { ITask } from 'src/app/models/task';
-import { LoadTasks } from 'src/app/store/actions/tasks.actions';
+import { LoadTasks, UpdateTasks } from 'src/app/store/actions/tasks.actions';
 
 import * as moment from 'moment';
 
@@ -402,6 +402,29 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return tasks.filter((task) => this.checkedTypes.includes(task.type));
   }
 
+  tapTask(task: ITask) {
+    setTimeout(() => {
+      this.checkTasksMode(task);
+    }, 300);
+  }
+
+  checkTasksMode(task: ITask) {
+    if (this.showTaskInfoMode) {
+      this.stopDragTask();
+    } else {
+      this.dragDropMode = true;
+      this.dragTask.task = task;
+    }
+  }
+
+  getTaskPosition(event: any) {
+    this.dragTask = {
+      task: this.dragTask.task,
+      left: event.pageX + 2 + 'px',
+      top: event.pageY + 2 + 'px'
+    };
+  }
+
   stopDragTask() {
     this.dragDropMode = false;
     this.dragTask = {
@@ -409,6 +432,20 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
       left: '',
       top: ''
     };
+  }
+
+  updateTask(day: Date) {
+    console.log('day', day);
+    const task = this.dragTask.task;
+    const taskDuration = this.getDifferentInMin(this.dragTask.task.start, this.dragTask.task.end);
+    task.start = Number(moment(day).format('X'));
+    task.end = Number(moment(day).add(taskDuration, 'minutes').format('X'));
+    task.day = Number(moment(day).startOf('day').format('X'));
+    this.allTasks.map((el) => {
+      if (el.id === task.id) { el = task; }
+    });
+    this.stopDragTask();
+    this.store.dispatch(new UpdateTasks(this.allTasks));
   }
 
   addNewTask(day?: Date) {

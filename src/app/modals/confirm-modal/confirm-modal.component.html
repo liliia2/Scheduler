@@ -1,0 +1,12 @@
+<div class="modal-container">
+  <h1 mat-dialog-title>Deleting Task</h1>
+  <div mat-dialog-content>
+    <div class="task-description">
+      <p>Are you sure you want to delete task <span class="bolder">{{ task.title }}?</span></p>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button mat-button color="warn" (click)="deleteTask()">Delete</button>
+  </div>
+</div>

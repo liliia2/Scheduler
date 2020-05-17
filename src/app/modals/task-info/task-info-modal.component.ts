@@ -35,7 +35,7 @@ export class TaskInfoModalComponent implements OnInit {
     return moment(this.task.start, 'X').format('DD MMMM YYYY') + ', ' + startTask + ' - ' + endTask;
   }
 
-  deleteTask() {
+  deleteTask(): void {
     this.dialogRef.close(TaskInfoModalComponent);
     this.dialog.open(ConfirmModalComponent, {
       width: '390px',
@@ -43,7 +43,7 @@ export class TaskInfoModalComponent implements OnInit {
     });
   }
 
-  editTask() {
+  editTask(): void {
     this.dialogRef.close(TaskInfoModalComponent);
     this.dialog.open(TaskModalComponent, {
       width: '540px',

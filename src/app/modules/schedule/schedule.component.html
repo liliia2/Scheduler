@@ -32,52 +32,30 @@
         <div class="responsible-user-filter">
             <h4>Check responsible user</h4>
             <section *ngFor="let user of users" class="checkbox">
-                <mat-checkbox [ngClass]="'color' + user.id"
-                    [checked]="checkShowedUserFilter(user.id)" (change)="changeShowedUsersList(user.id)">{{ user.fullName }}</mat-checkbox>
+                <mat-checkbox [ngClass]="'color' + user.id" [checked]="checkShowedUserFilter(user.id)"
+                    (change)="changeShowedUsersList(user.id)">{{ user.fullName }}</mat-checkbox>
             </section>
         </div>
         <div class="type-filter">
             <h4>Check tasks type</h4>
             <section *ngFor="let type of types" class="checkbox">
-                <mat-checkbox [checked]="checkShowedTypeFilter(type)" (change)="changeShowedTypeList(type)">{{ type }}</mat-checkbox>
+                <mat-checkbox [checked]="checkShowedTypeFilter(type)" (change)="changeShowedTypeList(type)">{{ type }}
+                </mat-checkbox>
             </section>
         </div>
     </div>
-    <app-day
-        class="schedule-day"
-        *ngIf="selectedRange === ranges[0] && settings"
-        [checkedTypes]="checkedTypes"
-        [checkedUsers]="checkedUsers"
-        [selectedDay]="selectedDay"
-        [firstDayOfWeek]="firstDayOfWeek"
-        [workingDays]="workingDays"
-        [startHour]="startHour"
-        [endHour]="endHour"
-        [timeInterval]="timeInterval">
+    <app-day class="schedule-day" *ngIf="selectedRange === ranges[0] && settings" [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers" [selectedDay]="selectedDay" [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays" [startHour]="startHour" [endHour]="endHour" [timeInterval]="timeInterval">
     </app-day>
-    <app-week
-        class="schedule-week"
-        *ngIf="selectedRange === ranges[1] && settings"
-        [checkedTypes]="checkedTypes"
-        [checkedUsers]="checkedUsers"
-        [selectedDay]="selectedDay"
-        [firstDayOfWeek]="firstDayOfWeek"
-        [workingDays]="workingDays"
-        [startHour]="startHour"
-        [endHour]="endHour"
-        [displayOnlyWorkingDays]="displayOnlyWorkingDays"
-        [timeInterval]="timeInterval">
+    <app-week class="schedule-week" *ngIf="selectedRange === ranges[1] && settings" [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers" [selectedDay]="selectedDay" [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays" [startHour]="startHour" [endHour]="endHour"
+        [displayOnlyWorkingDays]="displayOnlyWorkingDays" [timeInterval]="timeInterval">
     </app-week>
-    <app-month
-        class="schedule-month"
-        *ngIf="selectedRange === ranges[2] && settings"
-        [checkedTypes]="checkedTypes"
-        [checkedUsers]="checkedUsers"
-        [selectedDay]="selectedDay"
-        [firstDayOfWeek]="firstDayOfWeek"
-        [workingDays]="workingDays"
-        [startHour]="startHour"
-        [endHour]="endHour"
+    <app-month class="schedule-month" *ngIf="selectedRange === ranges[2] && settings" [checkedTypes]="checkedTypes"
+        [checkedUsers]="checkedUsers" [selectedDay]="selectedDay" [firstDayOfWeek]="firstDayOfWeek"
+        [workingDays]="workingDays" [startHour]="startHour" [endHour]="endHour"
         [displayOnlyWorkingDays]="displayOnlyWorkingDays">
     </app-month>
 </div>

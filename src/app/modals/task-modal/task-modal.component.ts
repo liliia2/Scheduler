@@ -149,17 +149,17 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     return hours;
   }
 
-  setStartHour(hour: string) {
+  setStartHour(hour: string): void {
     this.startTask = hour;
     this.varEndHours = this.getEndHours(hour, this.endHour);
   }
 
-  setEndHour(hour: string) {
+  setEndHour(hour: string): void {
     this.endTask = hour;
     this.varStartHours = this.getStartHours(this.startHour, hour);
   }
 
-  saveTask() {
+  saveTask(): void {
     const task = this.getTaskData();
     const updTasksList = this.getUpdTasksList(task);
     this.store.dispatch(new UpdateTasks(updTasksList));

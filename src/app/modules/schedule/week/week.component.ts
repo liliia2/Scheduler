@@ -101,7 +101,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
   }
 
-  tasksFilterByUser() {
+  tasksFilterByUser(): any {
     const filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
     return this.tasksFilterByType(filtredByUser);
   }
@@ -130,7 +130,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
   getWorkingHours(): Array<string> {
     let time = moment(this.startHour, 'HH:mm');
     const end = moment(this.endHour, 'HH:mm');
-    const arr = [ time.format('HH:mm') ];
+    const arr = [time.format('HH:mm')];
     do {
       time = moment(time).add(this.timeInterval, 'minutes');
       if (!moment(time).isBefore(end)) { continue; }
@@ -141,7 +141,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
 
   getDisplayedDays(): Array<Date> {
     let day = moment(this.startWeek).toDate();
-    const arr = [ day ];
+    const arr = [day];
     do {
       day = moment(day).add(1, 'day').toDate();
       arr.push(day);
@@ -158,7 +158,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return emptyCells.concat(cellsWithTasks);
   }
 
-  getEmptyCells() {
+  getEmptyCells(): any {
     const emptycells = [];
     for (let i = 0; i < this.displayedDays.length; i++) {
       const column = (i + 1) + ' / ' + (i + 2);
@@ -183,7 +183,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return emptycells;
   }
 
-  getFilledCells() {
+  getFilledCells(): any {
     let filledCells = [];
     for (const item of this.displayedDays) {
       const dateInUnix = moment(item).format('X');
@@ -195,7 +195,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return filledCells;
   }
 
-  sortTasksByShedule(tasks: any) {
+  sortTasksByShedule(tasks: any): any {
     const startWork: Date = this.getStartSheduleHour(tasks[0].start).toDate();
     const endWork: Date = this.getEndSheduleHour(tasks[0].end).toDate();
     tasks = tasks.filter(item =>
@@ -212,7 +212,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return tasksWithPosition;
   }
 
-  setBaseTaskInfo(tasks: ITask[]) {
+  setBaseTaskInfo(tasks: ITask[]): any {
     const updTasks = [];
     for (const element of tasks) {
       const newItem = {
@@ -230,7 +230,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return updTasks;
   }
 
-  getCrossedTasks(tasks: any[]) {
+  getCrossedTasks(tasks: any[]): any {
     const updTasks = tasks;
     for (const itemI of updTasks) {
       for (const itemJ of updTasks) {
@@ -248,7 +248,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return updTasks;
   }
 
-  sortUncrossedTasks(uncrossedTasks: any[]) {
+  sortUncrossedTasks(uncrossedTasks: any[]): any {
     for (const element of uncrossedTasks) {
       const col = this.getColumnPosition(element.info.day);
       element.column = col + '/' + (col + 1);
@@ -257,9 +257,8 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return uncrossedTasks;
   }
 
-  sortCrossedTasks(crossedTasks: any[]) {
+  sortCrossedTasks(crossedTasks: any[]): any {
     const updTasks = [];
-
     if (crossedTasks.length) {
       let group = [];
       let indexesOfGroup = [];
@@ -348,7 +347,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     const startBlock = itemStart ? itemStart : this.getStartSheduleHour(start);
     return Math.ceil((
       moment(start, 'X')
-      .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
+        .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
     );
   }
 
@@ -356,17 +355,17 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     const startBlock = itemStart ? itemStart : this.getStartSheduleHour(end);
     return Math.ceil((
       moment(end, 'X')
-      .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
+        .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
     );
   }
 
-  getStartSheduleHour(time: number) {
+  getStartSheduleHour(time: number): moment.Moment {
     return moment(time, 'X').startOf('day')
       .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
       .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes');
   }
 
-  getEndSheduleHour(time: number) {
+  getEndSheduleHour(time: number): moment.Moment {
     return moment(time, 'X').startOf('day')
       .add(moment(this.endHour, 'HH:mm').format('HH'), 'hours')
       .add(moment(this.endHour, 'HH:mm').format('mm'), 'minutes');
@@ -401,13 +400,13 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return this.filtredTasks.filter((task) => moment(task.start, 'X').startOf('day').format('X') === date);
   }
 
-  tapTask(task: ITask) {
+  tapTask(task: ITask): void {
     setTimeout(() => {
       this.checkTasksMode(task);
     }, 300);
   }
 
-  checkTasksMode(task: ITask) {
+  checkTasksMode(task: ITask): void {
     if (this.showTaskInfoMode) {
       this.stopDragTask();
     } else {
@@ -416,7 +415,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getTaskPosition(event: any) {
+  getTaskPosition(event: any): void {
     this.dragTask = {
       task: this.dragTask.task,
       left: event.pageX + 2 + 'px',
@@ -424,7 +423,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  stopDragTask() {
+  stopDragTask(): void {
     this.dragDropMode = false;
     this.dragTask = {
       task: null,
@@ -433,7 +432,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  updateTask(day: Date) {
+  updateTask(day: Date): void {
     const task = this.dragTask.task;
     const taskDuration = this.getDifferentInMin(this.dragTask.task.start, this.dragTask.task.end);
     task.start = Number(moment(day, 'X').format('X'));
@@ -446,7 +445,8 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     this.store.dispatch(new UpdateTasks(this.allTasks));
   }
 
-  addNewTask(day?: Date) {
+  addNewTask(day?: any): void {
+    if (typeof day === 'number') { day = moment(day, 'X').toDate(); }
     const start = moment(day).format('HH:mm');
     const end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
     if (!this.showTaskInfoMode) {
@@ -461,7 +461,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  showTaskInfo(task: ITask) {
+  showTaskInfo(task: ITask): void {
     if (!this.dragDropMode) {
       this.showTaskInfoMode = true;
       const dialogRef = this.dialog.open(TaskInfoModalComponent, {

@@ -76,7 +76,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  createSchedule() {
+  createSchedule(): void {
     this.filtredTasks = this.tasksFilterByUser();
     this.allCell = this.getAllCell();
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
@@ -167,13 +167,13 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     return tasks.filter((task) => this.checkedTypes.includes(task.type));
   }
 
-  tapTask(task: ITask) {
+  tapTask(task: ITask): void {
     setTimeout(() => {
       this.checkTasksMode(task);
     }, 300);
   }
 
-  checkTasksMode(task: ITask) {
+  checkTasksMode(task: ITask): void {
     if (this.showTaskInfoMode) {
       this.stopDragTask();
     } else {
@@ -182,7 +182,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getTaskPosition(event: any) {
+  getTaskPosition(event: any): void {
     this.dragTask = {
       task: this.dragTask.task,
       left: event.pageX + 2 + 'px',
@@ -190,7 +190,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  stopDragTask() {
+  stopDragTask(): void {
     this.dragDropMode = false;
     this.dragTask = {
       task: null,
@@ -199,7 +199,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  showTaskInfo(task: ITask) {
+  showTaskInfo(task: ITask): void {
     if (!this.dragDropMode) {
       this.showTaskInfoMode = true;
       const dialogRef = this.dialog.open(TaskInfoModalComponent, {
@@ -212,7 +212,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  addNewTask(day?: Date) {
+  addNewTask(day?: Date): void {
     if (!this.showTaskInfoMode) {
       this.dialog.open(TaskModalComponent, {
         width: '540px',
@@ -221,7 +221,7 @@ export class MonthComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  updateTask(day: Date) {
+  updateTask(day: Date): void {
     const task = this.dragTask.task;
     task.start = Number(moment(day)
       .add(moment(task.start, 'X').format('HH'), 'hours')

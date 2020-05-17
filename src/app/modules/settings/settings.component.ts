@@ -159,7 +159,7 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
       });
       dialogRef.afterClosed().subscribe(
         result => {
-          this.setValue();
+          if (result) { this.setValue(); }
           observer.next(result);
           observer.complete();
         },

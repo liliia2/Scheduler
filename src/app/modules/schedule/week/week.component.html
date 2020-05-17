@@ -38,13 +38,12 @@
                 <div *ngFor="let cell of allCell; let i = index" class="cell" [ngClass]="
                         i / workingHours.length >= numberOfSelectedDay &&
                         i / workingHours.length < numberOfSelectedDay + 1 ?
-                        'cell selected' : 'cell'" (click)="addNewTask(cell.time)"
+                        'cell selected' : 'cell'" (click)="!cell.content && addNewTask(cell.time)"
                     (mouseup)="dragDropMode && updateTask(cell.time)"
                     [ngStyle]="{ 'grid-column': cell.column, 'grid-row': cell.row }">
                     <div class="place-for-task" *ngIf="dragDropMode && cell.time"><span class="vr-line"></span></div>
                     <div *ngIf="cell.content" class="cell-with-content">
-                        <div *ngIf="!cell.subgrid; else taskBlock" 
-                            (click)="showTaskInfo(cell.info)"
+                        <div *ngIf="!cell.subgrid; else taskBlock" (click)="showTaskInfo(cell.info)"
                             (mousedown)="!showTaskInfoMode && cell.content && tapTask(cell.info)"
                             (mouseup)="dragDropMode && updateTask(cell.info.start)"
                             [ngClass]="'task color' + cell.info.responsibleUser.id">
@@ -52,7 +51,9 @@
                             <p>{{ cell.info.description }}</p>
                         </div>
                         <ng-template #taskBlock>
-                            <div class="task-block" (mouseup)="dragDropMode && updateTask(cell.groupStartTime)" [ngStyle]="{
+                            <div class="task-block" (mouseup)="dragDropMode && updateTask(cell.groupStartTime)"
+                                (click)="cell.content && addNewTask(cell.groupStartTime)"
+                                [ngStyle]="{
                                     'grid-template-columns': 'repeat(' + cell.subgridColumn + ', minmax(16px, auto))',
                                     'grid-template-rows': 'repeat(' + cell.subgridRow + ', minmax(17px, 1fr))'
                                 }">

@@ -72,7 +72,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  setStarEndWork() {
+  setStarEndWork(): void {
     this.startWork = moment(this.selectedDay).startOf('day')
       .add(moment(this.startHour, 'HH:mm').format('HH'), 'hours')
       .add(moment(this.startHour, 'HH:mm').format('mm'), 'minutes')
@@ -129,7 +129,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return emptyCells.concat(cellsWithTasks);
   }
 
-  getEmptyCells() {
+  getEmptyCells(): any {
     const emptycells = [];
     for (let i = 0; i < this.workingHours.length; i++) {
       const row = (i + 1) + ' / ' + (i + 2);
@@ -151,7 +151,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return emptycells;
   }
 
-  sortTasksByShedule(tasks: any) {
+  sortTasksByShedule(tasks: any): any {
     tasks = tasks.filter(item =>
       moment(item.start, 'X').isBefore(this.endWork) ||
       moment(item.end, 'X').isAfter(this.startWork)
@@ -166,7 +166,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return tasksWithPosition;
   }
 
-  setBaseTaskInfo(tasks: ITask[]) {
+  setBaseTaskInfo(tasks: ITask[]): any {
     const updTasks = [];
     for (const element of tasks) {
       const newItem = {
@@ -184,7 +184,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return updTasks;
   }
 
-  getCrossedTasks(tasks: any[]) {
+  getCrossedTasks(tasks: any[]): any {
     const updTasks = tasks;
     for (const itemI of updTasks) {
       for (const itemJ of updTasks) {
@@ -202,9 +202,8 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return updTasks;
   }
 
-  sortCrossedTasks(crossedTasks: any[]) {
+  sortCrossedTasks(crossedTasks: any[]): any {
     const updTasks = [];
-
     if (crossedTasks.length) {
       let group = [];
       let indexesOfGroup = [];
@@ -276,7 +275,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return updTasks;
   }
 
-  sortUncrossedTasks(uncrossedTasks: any[]) {
+  sortUncrossedTasks(uncrossedTasks: any[]): any {
     for (const element of uncrossedTasks) {
       element.column = '1/2';
       element.row = this.getRowStart(element.info.start) + '/' + this.getRowEnd(element.info.end);
@@ -310,13 +309,13 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return arr;
   }
 
-  tapTask(task: ITask) {
+  tapTask(task: ITask): void {
     setTimeout(() => {
       this.checkTasksMode(task);
     }, 300);
   }
 
-  checkTasksMode(task: ITask) {
+  checkTasksMode(task: ITask): void {
     if (this.showTaskInfoMode) {
       this.stopDragTask();
     } else {
@@ -325,7 +324,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getTaskPosition(event: any) {
+  getTaskPosition(event: any): void {
     this.dragTask = {
       task: this.dragTask.task,
       left: event.pageX + 2 + 'px',
@@ -333,7 +332,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  stopDragTask() {
+  stopDragTask(): void {
     this.dragDropMode = false;
     this.dragTask = {
       task: null,
@@ -342,7 +341,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  updateTask(day: Date) {
+  updateTask(day: Date): void {
     const task = this.dragTask.task;
     const taskDuration = this.getDifferentInMin(this.dragTask.task.start, this.dragTask.task.end);
     task.start = Number(moment(day, 'X').format('X'));
@@ -359,7 +358,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     return moment(end, 'X').diff(moment(start, 'X'), 'minutes');
   }
 
-  addNewTask(day?: any) {
+  addNewTask(day?: any): void {
     if (this.showTaskInfoMode) { return; }
     if (typeof day === 'number') { day = moment(day, 'X').toDate(); }
     const start = moment(day).format('HH:mm');
@@ -376,7 +375,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  showTaskInfo(task: ITask) {
+  showTaskInfo(task: ITask): void {
     if (!this.dragDropMode) {
       this.showTaskInfoMode = true;
       const dialogRef = this.dialog.open(TaskInfoModalComponent, {

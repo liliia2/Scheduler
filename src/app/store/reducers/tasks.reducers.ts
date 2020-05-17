@@ -1,10 +1,10 @@
 import { TasksActions, ETasksActions } from '../actions/tasks.actions';
 import { initialTasksState, ITasksState } from './../state/tasks.state';
 
-export const tasksReducers = (
-    state = initialTasksState,
+export function tasksReducers(
+    state: ITasksState = initialTasksState,
     action: TasksActions
-): ITasksState => {
+) {
     switch (action.type) {
         case ETasksActions.LOAD_TASKS: {
             return {
@@ -49,4 +49,4 @@ export const tasksReducers = (
         default:
             return state;
     }
-};
+}

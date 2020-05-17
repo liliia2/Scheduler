@@ -1,10 +1,10 @@
 import { SettingsActions, ESettingsActions } from '../actions/settings.actions';
 import { initialSettingsState, ISettingsState } from './../state/settings.state';
 
-export const settingsReducers = (
-    state = initialSettingsState,
+export function settingsReducers(
+    state: ISettingsState = initialSettingsState,
     action: SettingsActions
-): ISettingsState => {
+) {
     switch (action.type) {
         case ESettingsActions.LOAD_SETTINGS: {
             return {
@@ -47,4 +47,4 @@ export const settingsReducers = (
         default:
             return state;
     }
-};
+}

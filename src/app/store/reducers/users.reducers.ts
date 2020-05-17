@@ -1,10 +1,10 @@
 import { UsersActions, EUsersActions } from '../actions/users.actions';
 import { initialUsersState, IUsersState } from './../state/users.state';
 
-export const usersReducers = (
-    state = initialUsersState,
+export function usersReducers(
+    state: IUsersState = initialUsersState,
     action: UsersActions
-): IUsersState => {
+) {
     switch (action.type) {
         case EUsersActions.LOAD_USERS: {
             return {
@@ -29,4 +29,4 @@ export const usersReducers = (
         default:
             return state;
     }
-};
+}

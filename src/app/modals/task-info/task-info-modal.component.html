@@ -4,7 +4,7 @@
     <div class="task-time">
       <span>{{ date }}</span>
     </div>
-    <div class="task-description">
+    <div class="task-description" *ngIf="task.description">
       <p><span class="bolder">Description: </span>{{ task.description }}</p>
     </div>
     <div class="task-resp-user">

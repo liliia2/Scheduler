@@ -2,7 +2,8 @@
     *ngIf="filtredTasks"
     (click)="dragDropMode && stopDragTask()"
     (mousemove)="dragTask.task && getTaskPosition($event)">
-    <div class="drag-task"
+    <div 
+        [ngClass]="'drag-task color' + dragTask.task.responsibleUser.id"
         *ngIf="dragDropMode && dragTask.top"
         [ngStyle]="dragTask.task && { 'left': dragTask.left, 'top': dragTask.top }">
         <p>{{ dragTask.task.title }}</p>
@@ -35,7 +36,7 @@
                         </p>
                         <div *ngIf="day.tasks.length">
                             <div class="task-view" *ngFor="let task of day.tasks">
-                                <div class="task" (click)="task && showTaskInfo(task)"
+                                <div [ngClass]="'task color' + task.responsibleUser.id" (click)="task && showTaskInfo(task)"
                                     (mousedown)="!showTaskInfoMode && task && tapTask(task)">
                                     <p>{{ task.title }}</p>
                                 </div>

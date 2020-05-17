@@ -101,6 +101,15 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     this.numberOfSelectedDay = this.getNumberOfSelectedDay();
   }
 
+  tasksFilterByUser() {
+    const filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
+    return this.tasksFilterByType(filtredByUser);
+  }
+
+  tasksFilterByType(tasks: ITask[]): ITask[] {
+    return tasks.filter((task) => this.checkedTypes.includes(task.type));
+  }
+
   getRange(): void {
     this.startWeek = (moment(this.selectedDay).weekday() >= this.firstDayOfWeek ?
       moment(this.selectedDay).startOf('week').add(this.firstDayOfWeek, 'day').toDate() :
@@ -146,9 +155,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
   getAllCell(): any {
     const emptyCells = this.getEmptyCells();
     const cellsWithTasks = this.getFilledCells();
-    const cells = emptyCells.concat(cellsWithTasks);
-    console.log('cells', cells);
-    return cells;
+    return emptyCells.concat(cellsWithTasks);
   }
 
   getEmptyCells() {
@@ -202,7 +209,6 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     uncrossedTasks = uncrossedTasks.length ? this.sortUncrossedTasks(uncrossedTasks) : [];
     crossedTasks = crossedTasks.length ? this.sortCrossedTasks(crossedTasks) : [];
     const tasksWithPosition = uncrossedTasks.concat(crossedTasks);
-    // console.log('tasksWithPosition', tasksWithPosition);
     return tasksWithPosition;
   }
 
@@ -259,8 +265,8 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
       let indexesOfGroup = [];
       let groupStartTime: number;
       let groupEndTime: number;
-      const startWork = +(this.getStartSheduleHour(crossedTasks[0].start).format('X'));
-      const endWork = +(this.getEndSheduleHour(crossedTasks[0].end).format('X'));
+      const startWork = +(this.getStartSheduleHour(crossedTasks[0].info.start).format('X'));
+      const endWork = +(this.getEndSheduleHour(crossedTasks[0].info.end).format('X'));
       for (const element of crossedTasks) {
         element.cross = [...new Set(element.cross)];
       }
@@ -268,12 +274,12 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
         if (i !== 0 && i !== crossedTasks.length && indexesOfGroup.includes(crossedTasks[i].info.id)) {
           group.push(crossedTasks[i]);
           indexesOfGroup = indexesOfGroup.concat(crossedTasks[i].cross);
-          if (groupEndTime < crossedTasks[i].info.end) { groupEndTime = crossedTasks[i].info.end; }
+          if (groupEndTime < crossedTasks[i].info.end) {
+            groupEndTime = (crossedTasks[i].info.end > endWork) ? endWork : crossedTasks[i].info.end;
+          }
         } else {
           if (i !== 0 || i === crossedTasks.length) {
             const col = this.getColumnPosition(groupStartTime);
-            groupStartTime = (groupStartTime < startWork) ? startWork : groupStartTime;
-            groupEndTime = (groupEndTime > endWork) ? endWork : groupEndTime;
             let countCrossEl = 0;
             for (const index of indexesOfGroup) {
               const count = indexesOfGroup.filter(el => el === index).length;
@@ -284,6 +290,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
             const subgridRowValue: number = Math.ceil(this.getDifferentInMin(groupStartTime, groupEndTime) / this.timeInterval);
             const eventGroup = {
               groupStartTime,
+              groupEndTime,
               content: true,
               column: col + '/' + (col + 1),
               row: this.getRowStart(groupStartTime) + '/' + this.getRowEnd(groupEndTime),
@@ -294,10 +301,9 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
             };
             updTasks.push(eventGroup);
           }
-
           if (i !== crossedTasks.length) {
-            groupStartTime = crossedTasks[i].info.start;
-            groupEndTime = crossedTasks[i].info.end;
+            groupStartTime = (crossedTasks[i].info.start < startWork) ? startWork : crossedTasks[i].info.start;
+            groupEndTime = (crossedTasks[i].info.end > endWork) ? endWork : crossedTasks[i].info.end;
             group = [crossedTasks[i]];
             indexesOfGroup = crossedTasks[i].cross;
           }
@@ -313,11 +319,13 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
         }
         const columnEnd = columnStart + 1;
         let itemStart = item.groupStartTime;
-        let itemEnd = item.tasks[i].info.end;
+        let itemEnd = item.groupEndTime;
         itemStart = (itemStart > item.tasks[i].info.start) ? item.tasks[i].info.start : itemStart;
         itemEnd = (itemEnd > item.tasks[i].info.end) ? item.tasks[i].info.end : itemEnd;
         item.tasks[i].column = columnStart + '/' + columnEnd;
-        item.tasks[i].row = this.getRowStart(item.tasks[i].info.start, itemStart) + '/' + this.getRowEnd(item.tasks[i].info.end, itemStart);
+        item.tasks[i].row =
+          this.getRowStart(item.tasks[i].info.start, itemStart) + '/' +
+          this.getRowEnd(itemEnd, itemStart);
       }
     }
 
@@ -393,15 +401,6 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     return this.filtredTasks.filter((task) => moment(task.start, 'X').startOf('day').format('X') === date);
   }
 
-  tasksFilterByUser() {
-    const filtredByUser = this.allTasks.filter((task) => this.checkedUsers.includes(task.responsibleUser.id));
-    return this.tasksFilterByType(filtredByUser);
-  }
-
-  tasksFilterByType(tasks: ITask[]): ITask[] {
-    return tasks.filter((task) => this.checkedTypes.includes(task.type));
-  }
-
   tapTask(task: ITask) {
     setTimeout(() => {
       this.checkTasksMode(task);
@@ -435,12 +434,11 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateTask(day: Date) {
-    console.log('day', day);
     const task = this.dragTask.task;
     const taskDuration = this.getDifferentInMin(this.dragTask.task.start, this.dragTask.task.end);
-    task.start = Number(moment(day).format('X'));
-    task.end = Number(moment(day).add(taskDuration, 'minutes').format('X'));
-    task.day = Number(moment(day).startOf('day').format('X'));
+    task.start = Number(moment(day, 'X').format('X'));
+    task.end = Number(moment(day, 'X').add(taskDuration, 'minutes').format('X'));
+    task.day = Number(moment(day, 'X').startOf('day').format('X'));
     this.allTasks.map((el) => {
       if (el.id === task.id) { el = task; }
     });

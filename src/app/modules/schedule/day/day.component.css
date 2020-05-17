@@ -52,6 +52,9 @@ button {
 .schedule {
     height: 100%;
     width: calc(100% - 56px);
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none; 
 }
 
 .date-block {
@@ -68,26 +71,99 @@ button {
     text-align: center;
 }
 
-.selected {
-    background-color: rgba(103, 164, 255, 0.1);
-}
-
-.ceil-block {
-    display: flex;
+.cell-block {
+    display: grid;
     height: calc(100% - 56px);
 }
 
-.day-in-ceil-block {
-    width: 100%;
-    height: 100%;
-    display: grid;
-}
-
-.ceil-block .ceil {
+.cell-block .cell {
     margin: auto;
     border-top: 1px solid rgba(235, 235, 235, 0.4);
     border-left: 1px solid rgba(235, 235, 235, 0.4);
-    width: 100%;
+    min-width: 100%;
     height: 100%;
     text-align: center;
+}
+
+.cell-with-content {
+    height: 100%;
+    max-width: 96%;
+}
+
+.task-block {
+    display: grid;
+    height: 100%;
+}
+
+.task {
+    background-color: #10bd8f;
+    border-radius: 4px;
+    color: white;
+    margin: 2px;
+    height: calc(100% - 3px);
+    text-align: left;
+    overflow: hidden;
+}
+
+.color1 {
+    background-color: #ff40d6b3;
+}
+
+.color2 {
+    background-color: #1976d2bd;
+}
+
+.color3 {
+    background-color: #10bd8fba;
+}
+
+.task p {
+    padding: 0 2px;
+    margin: 2px;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-title {
+    font-weight: 700;
+}
+
+.drag-task p {
+    padding: 4px;
+    margin: 0;
+    size: 12;
+    white-space: nowrap;
+    overflow: auto;
+    white-space: inherit;
+}
+
+.drag-task {
+    border-radius: 4px;
+    color: white;
+    width: 100px;
+    height: 75px;
+    text-align: left;
+    margin: 2px;
+    position: absolute;
+}
+
+.place-for-task {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+span.vr-line {
+    margin: 2px;
+    height: 24px;
+    width: 1px;
+    min-width: 1px;
+    display: table-caption;
+    background-color: rgba(93, 125, 255, 0.5);
+    display: none;
+}
+
+.place-for-task:hover span.vr-line {
+    display: block;
 }

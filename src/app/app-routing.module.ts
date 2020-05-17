@@ -4,6 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ScheduleComponent } from './modules/schedule/schedule.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 
+import { ExitSettingsGuard } from './modules/settings/exit-settings.guard';
+
 const routes: Routes = [
   {
     path: '',
@@ -16,12 +18,14 @@ const routes: Routes = [
   },
   {
     path: 'settings',
-    component: SettingsComponent
+    component: SettingsComponent,
+    canDeactivate: [ExitSettingsGuard]
   }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [ExitSettingsGuard]
 })
 export class AppRoutingModule { }

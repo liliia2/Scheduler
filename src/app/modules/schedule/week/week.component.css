@@ -118,6 +118,7 @@ button:active {
 
 .cell-with-content {
     height: 100%;
+    max-width: 96%;
 }
 
 .task-block {
@@ -136,15 +137,15 @@ button:active {
 }
 
 .color1 {
-    background-color: #ff40d6;
+    background-color: #ff40d6b3;
 }
 
 .color2 {
-    background-color: #1976d2;
+    background-color: #1976d2bd;
 }
 
 .color3 {
-    background-color: #10bd8f;
+    background-color: #10bd8fba;
 }
 
 .task p {
@@ -169,7 +170,6 @@ button:active {
 }
 
 .drag-task {
-    background-color: #10bd8f;
     border-radius: 4px;
     color: white;
     width: 100px;
@@ -180,13 +180,21 @@ button:active {
 }
 
 .place-for-task {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+span.vr-line {
     margin: 2px;
     height: 24px;
     width: 1px;
+    min-width: 1px;
+    display: table-caption;
     background-color: rgba(93, 125, 255, 0.5);
     display: none;
 }
 
-.cell:hover .place-for-task {
+.place-for-task:hover span.vr-line {
     display: block;
 }

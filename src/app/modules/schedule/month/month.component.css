@@ -79,12 +79,23 @@ button {
     font-weight: 500;
 }
 
-.task-view {
-    background-color: #10bd8f;
+.task-view, .task {
     border-radius: 4px;
     color: white;
     margin: 2px;
     height: 24px;
+}
+
+.color1 {
+    background-color: #ff40d6b3;
+}
+
+.color2 {
+    background-color: #1976d2bd;
+}
+
+.color3 {
+    background-color: #10bd8fba;
 }
 
 .task-view p, 

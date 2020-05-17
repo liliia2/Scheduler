@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 
 import { IUser } from '../../models/user';
 import { ITask } from '../../models/task';
@@ -11,6 +11,14 @@ import { IAppState } from '../../store/state/app.state';
 import { selectSettings } from '../../store/selectors/settings.selector';
 import { selectUsersList } from '../../store/selectors/users.selector';
 import { UpdateTasks } from 'src/app/store/actions/tasks.actions';
+import { ErrorStateMatcher } from '@angular/material';
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-task-modal',
@@ -33,6 +41,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   taskId: number;
   responsibleUser: IUser;
 
+  matcher = new MyErrorStateMatcher();
   taskForm = new FormGroup({
     title: new FormControl(''),
     description: new FormControl(''),
@@ -109,6 +118,13 @@ export class TaskModalComponent implements OnInit, OnDestroy {
 
   compareFn(c1: any, c2: any): boolean {
     return c1 && c2 ? c1.id === c2.id : c1 === c2;
+  }
+
+  checkInputs(): boolean {
+    return (
+      this.taskForm.get('title').value &&
+      this.taskForm.get('type').value &&
+      this.taskForm.get('responsibleUser').value.id) ? true : false;
   }
 
   getStartHours(start: string, end: string): Array<string> {

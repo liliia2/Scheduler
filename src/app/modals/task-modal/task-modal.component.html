@@ -4,7 +4,7 @@
     <div mat-dialog-content>
       <mat-form-field class="task-name-field">
         <mat-label>Enter the task name</mat-label>
-        <input matInput #taskName formControlName="title" maxlength="64" required>
+        <input matInput #taskName formControlName="title" [errorStateMatcher]="matcher" maxlength="64" required>
         <mat-hint align="end">{{ taskName.value.length }} / 64</mat-hint>
       </mat-form-field>
     </div>
@@ -65,7 +65,7 @@
     </div>
     <div mat-dialog-actions>
       <button mat-button (click)="onCancelClick()">Cancel</button>
-      <button mat-raised-button color="accent" (click)="saveTask()">Save</button>
+      <button mat-raised-button color="accent" (click)="saveTask()" [disabled]="!checkInputs()">Save</button>
     </div>
   </form>
 </div>

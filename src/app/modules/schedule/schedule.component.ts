@@ -46,7 +46,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   ) {
     this.today = moment().startOf('day').toDate();
     this.selectedDay = this.today;
-    this.selectedRange = this.ranges[1];
+    this.selectedRange = this.ranges[0];
     const usersSub = this.store.select(selectUsersList).subscribe(result => {
       if (result && !this.users) {
         this.users = result;
@@ -67,10 +67,6 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     if (!this.users) { this.store.dispatch(new LoadUsers()); }
     if (!this.settings) { this.store.dispatch(new LoadSettings()); }
   }
-
-  // ngDoCheck() {
-  //   console.log('Hi');
-  // }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();

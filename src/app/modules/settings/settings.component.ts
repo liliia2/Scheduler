@@ -1,19 +1,22 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observer, Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
+import { MatDialog } from '@angular/material';
 
 import { IAppState } from 'src/app/store/state/app.state';
 import { ISettings } from 'src/app/models/settings';
 import { LoadSettings, UpdateSettings } from 'src/app/store/actions/settings.actions';
 import { selectSettings } from 'src/app/store/selectors/settings.selector';
+import { ComponentCanDeactivate } from './exit-settings.guard';
+import { ConfirmModalComponent } from 'src/app/modals/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit, OnDestroy {
+export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
   private subscription = new Subscription();
   settings: ISettings;
   startTime: Date;
@@ -30,6 +33,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   editMode: boolean;
 
   constructor(
+    private dialog: MatDialog,
     private store: Store<IAppState>
   ) {
     this.subscription = this.store.select(selectSettings).subscribe(result => {
@@ -56,7 +60,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   setValue() {
     this.editMode = false;
     this.startWeek = this.settings.startWeek;
-    this.workingDays = this.settings.workingDays;
+    this.workingDays = [...this.settings.workingDays];
     this.startHour = this.settings.startHour;
     this.endHour = this.settings.endHour;
     this.lang = this.settings.lang;
@@ -136,6 +140,35 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new UpdateSettings(newSettings));
     this.editMode = false;
+  }
+
+  canDeactivate() {
+    if (!this.editMode) {
+      return true;
+    }
+
+    return Observable.create((observer: Observer<boolean>) => {
+      const dialogRef = this.dialog.open(ConfirmModalComponent, {
+        width: '500px',
+        data: {
+          confirmButtonTxt: 'Ok',
+          cancelButtonTxt: 'Cancel',
+          title: 'Unsaved Changes',
+          confirmTxt: 'You have unsaved changes. Leave the page?'
+        }
+      });
+      dialogRef.afterClosed().subscribe(
+        result => {
+          this.setValue();
+          observer.next(result);
+          observer.complete();
+        },
+        error => {
+          observer.next(error);
+          observer.complete();
+        }
+      );
+    });
   }
 
 }

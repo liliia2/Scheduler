@@ -1,5 +1,6 @@
 .modal-container {
     width: 492px;
+    max-width: 100%;
 }
 
 .task-name-field,
@@ -8,15 +9,24 @@
 .task-type,
 .responsible-user {
     width: 480px;
+    max-width: 100%;
 }
 
-.working-date-hours-selector {
-    display: flex;
+@media (min-width: 660px) {
+    .working-date-hours-selector {
+        display: flex; 
+    }
+
+    .date-picker-field, .start-task-fields, .end-task-fields {
+        width: 152px;
+        padding-right: 12px;
+    }
 }
 
-.date-picker-field, .start-task-fields, .end-task-fields {
-    width: 152px;
-    padding-right: 12px;
+@media (max-width: 659px) {
+    .date-picker-field, .start-task-fields, .end-task-fields {
+        width: 100%;
+    }
 }
 
 .mat-dialog-actions {

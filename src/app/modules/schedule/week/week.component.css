@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 .loading {
     margin: 0;
     height: 100%;
@@ -78,7 +82,8 @@ button:active {
     width: calc(100% - 56px);
     -moz-user-select: none;
     -khtml-user-select: none;
-    user-select: none; 
+    user-select: none;
+    border-right: 1px solid rgba(235, 235, 235, 0.4);
 }
 
 .date-block {

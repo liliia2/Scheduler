@@ -1,5 +1,6 @@
 .mat-dialog-title {
     margin: 0 0 4px;
+    text-align: left;
 }
 
 .task-time {
@@ -21,6 +22,30 @@ p {
     margin-top: 12px;
     margin-right: 8px;
     display: block;
+}
+
+.mat-dialog-content {
+    text-align: left;
+}
+
+@media (max-width: 499px) {
+    .mat-dialog-actions {
+        display: table-caption;
+        width: 100%;
+    }
+
+    .mat-dialog-actions .mat-button-base+.mat-button-base, .delete-button {
+        margin: 8px 0;
+    }
+   
+    .modal-container {
+        text-align: -webkit-center;
+    }
+}
+
+.modal-container {
+    width: 100%;
+    max-width: 100%;
 }
 
 .delete-button {

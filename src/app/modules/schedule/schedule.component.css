@@ -6,7 +6,8 @@
     display: flex;
     width: 100%;
     height: calc(100% - 52px);
-    margin-top: 8px;
+    margin: 8px auto 0;
+    max-width: 1440px;
 }
 
 .filters {
@@ -15,7 +16,7 @@
     max-width: 260px;
     min-width: 260px;
     height: 100%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.05);
     overflow-x: scroll;
 }
 

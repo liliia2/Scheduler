@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 .month-schedule-container {
     margin: 0;
     height: calc(100% - 4px);
@@ -34,6 +38,7 @@ button {
     min-width: 660px;
     height: 100%;
     width: 100%;
+    border-right: 1px solid rgba(235, 235, 235, 0.4);
 }
 
 .date-block {

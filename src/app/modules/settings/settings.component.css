@@ -1,8 +1,13 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 .settings-content {
     width: 100%;
     height: calc(100% - 56px);
     overflow-y: auto;
-    margin-top: 8px;
+    margin: 8px auto;
+    max-width: 90%;
 }
 
 .settings {

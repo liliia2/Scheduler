@@ -52,7 +52,7 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
       if (result && !this.allTasks || result && result !== this.allTasks) {
-        this.allTasks = result;
+        this.allTasks = this.filterByWorkingTime(result);
         this.allTasks = this.sortReceivedTask();
         if (this.checkedTypes && this.checkedUsers) {
           this.createSchedule();
@@ -75,6 +75,13 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  filterByWorkingTime(tasks: ITask[]) {
+    return tasks.filter((task) =>
+      task.end > +moment(this.getStartSheduleHour(task.start)).format('X') &&
+      task.start < +moment(this.getEndSheduleHour(task.end)).format('X')
+    );
   }
 
   sortReceivedTask(): ITask[] {

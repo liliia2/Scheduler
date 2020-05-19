@@ -40,7 +40,6 @@ export class TaskModalComponent implements OnInit, OnDestroy {
   allTasks: ITask[];
   taskId: number;
   responsibleUser: IUser;
-
   matcher = new MyErrorStateMatcher();
   taskForm = new FormGroup({
     title: new FormControl(''),
@@ -58,9 +57,7 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<TaskModalComponent>,
     private store: Store<IAppState>,
     @Inject(MAT_DIALOG_DATA) public data: [ITask[], any]
-  ) {
-      this.addSubscr();
-  }
+  ) { this.addSubscr(); }
 
   ngOnInit() {
     this.setStartData();
@@ -75,8 +72,8 @@ export class TaskModalComponent implements OnInit, OnDestroy {
       if (result) {
         this.startHour = result.startHour;
         this.endHour = result.endHour;
-        this.varStartHours = this.getStartHours(this.startHour, this.endHour);
-        this.varEndHours = this.getEndHours(this.startHour, this.endHour);
+        this.varStartHours = this.getStartHours(this.endHour);
+        this.varEndHours = this.getEndHours(this.startHour);
       }
     });
     const usersSub = this.store.select(selectUsersList).subscribe(result => {
@@ -100,6 +97,8 @@ export class TaskModalComponent implements OnInit, OnDestroy {
       this.taskForm.get('day').setValue(this.data[1]);
     } else {
       this.allTasks = this.data[0];
+      this.varStartHours = this.getStartHours(this.data[1].end);
+      this.varEndHours = this.getEndHours(this.data[1].start);
       this.taskForm.get('startTask').setValue(this.data[1].start);
       this.taskForm.get('endTask').setValue(this.data[1].end);
       this.taskForm.get('day').setValue(this.data[1].day);
@@ -114,6 +113,8 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     this.taskForm.get('day').setValue(moment(this.task.start, 'X').toDate());
     this.taskForm.get('type').setValue(this.task.type);
     this.taskForm.get('responsibleUser').setValue(this.task.responsibleUser);
+    this.varStartHours = this.getStartHours(moment(this.task.end, 'X').format('HH:mm'));
+    this.varEndHours = this.getEndHours(moment(this.task.start, 'X').format('HH:mm'));
   }
 
   compareFn(c1: any, c2: any): boolean {
@@ -127,8 +128,8 @@ export class TaskModalComponent implements OnInit, OnDestroy {
       this.taskForm.get('responsibleUser').value.id) ? true : false;
   }
 
-  getStartHours(start: string, end: string): Array<string> {
-    let time = moment(start, 'HH:mm').toDate();
+  getStartHours(end: string): Array<string> {
+    let time = moment('00:00', 'HH:mm').toDate();
     const endTime = moment(end, 'HH:mm').toDate();
     const hours = [];
     do {
@@ -138,9 +139,9 @@ export class TaskModalComponent implements OnInit, OnDestroy {
     return hours;
   }
 
-  getEndHours(start: string, end: string): Array<string> {
+  getEndHours(start: string): Array<string> {
     let time = moment(start, 'HH:mm').toDate();
-    const endTime = moment(end, 'HH:mm').toDate();
+    const endTime = moment('23:30', 'HH:mm').toDate();
     const hours = [];
     do {
       time = moment(time).add(30, 'minutes').toDate();
@@ -151,12 +152,12 @@ export class TaskModalComponent implements OnInit, OnDestroy {
 
   setStartHour(hour: string): void {
     this.startTask = hour;
-    this.varEndHours = this.getEndHours(hour, this.endHour);
+    this.varEndHours = this.getEndHours(hour);
   }
 
   setEndHour(hour: string): void {
     this.endTask = hour;
-    this.varStartHours = this.getStartHours(this.startHour, hour);
+    this.varStartHours = this.getStartHours(hour);
   }
 
   saveTask(): void {

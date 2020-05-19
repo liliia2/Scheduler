@@ -36,6 +36,7 @@ import { UsersEffects } from './store/effects/users.effects';
 import { settingsReducers } from '../app/store/reducers/settings.reducers';
 import { tasksReducers } from '../app/store/reducers/tasks.reducers';
 import { usersReducers } from './store/reducers/users.reducers';
+import { NoticeModalComponent } from './modals/notice-modal/notice-modal.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { usersReducers } from './store/reducers/users.reducers';
     DayComponent,
     HeaderComponent,
     MonthComponent,
+    NoticeModalComponent,
     SettingsComponent,
     ScheduleComponent,
     TaskModalComponent,
@@ -79,13 +81,16 @@ import { usersReducers } from './store/reducers/users.reducers';
     ])
   ],
   exports: [],
-  entryComponents: [ConfirmModalComponent,  TaskModalComponent, TaskInfoModalComponent ],
+  entryComponents: [ConfirmModalComponent,  NoticeModalComponent, TaskModalComponent, TaskInfoModalComponent ],
   providers: [
     {
       provide: DateAdapter, useClass: CustomDateAdapter
     },
     {
       provide: ConfirmModalComponent, useClass: ConfirmModalComponent
+    },
+    {
+      provide: NoticeModalComponent, useClass: NoticeModalComponent
     },
     {
       provide: TaskModalComponent, useClass: TaskModalComponent

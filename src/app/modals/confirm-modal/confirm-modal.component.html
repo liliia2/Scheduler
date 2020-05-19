@@ -7,6 +7,6 @@
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onCancelClick()">{{ cancelButtonTxt }}</button>
-    <button mat-button color="warn" (click)="task && deleteTask()" (click)="!task && closeModale()">{{ confirmButtonTxt }}</button>
+    <button mat-button color="warn" (click)="task && deleteTask() || !task && closeModale()">{{ confirmButtonTxt }}</button>
   </div>
 </div>

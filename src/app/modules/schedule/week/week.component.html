@@ -54,7 +54,7 @@
                             <div class="task-block" (mouseup)="dragDropMode && updateTask(cell.groupStartTime)"
                                 (click)="cell.content && addNewTask(cell.groupStartTime)"
                                 [ngStyle]="{
-                                    'grid-template-columns': 'repeat(' + cell.subgridColumn + ', minmax(16px, auto))',
+                                    'grid-template-columns': 'repeat(' + cell.subgridColumn + ', minmax(24px, 1fr))',
                                     'grid-template-rows': 'repeat(' + cell.subgridRow + ', minmax(17px, 1fr))'
                                 }">
                                 <div *ngFor="let task of cell.tasks"

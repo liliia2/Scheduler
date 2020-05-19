@@ -26,7 +26,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   checkedTypes: Array<string> = ['All', 'Type1', 'Type2', 'Type3'];
   checkedUsers: Array<number> = [];
   displayOnlyWorkingDays = false;
-  timeInterval = 60;
+  timeInterval = 30;
   today: Date;
   selectedRange: string;
   selectedDay: Date;

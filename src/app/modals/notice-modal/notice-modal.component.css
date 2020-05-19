@@ -1,0 +1,10 @@
+.task-description p {
+    line-height: 1.5em;
+    text-align: center;
+}
+
+button {
+    width: 112px;
+    margin: auto;
+    background: none;
+}

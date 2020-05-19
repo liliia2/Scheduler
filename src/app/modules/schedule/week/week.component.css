@@ -66,6 +66,7 @@ button:active {
 
 .time-block .time {
     text-align: center;
+    height: 100%;
 }
 
 .time-block .time span {
@@ -114,11 +115,14 @@ button:active {
     width: 100%;
     height: 100%;
     text-align: center;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .cell-with-content {
     height: 100%;
-    max-width: 96%;
+    max-width: 98%;
+    margin-left: 1px;
 }
 
 .task-block {
@@ -130,10 +134,11 @@ button:active {
     background-color: #10bd8f;
     border-radius: 4px;
     color: white;
-    margin: 2px;
-    height: calc(100% - 3px);
+    margin: 0 2px 2px;
+    height: calc(100% - 4px);
     text-align: left;
     overflow: hidden;
+    min-width: 20px;
 }
 
 .color1 {

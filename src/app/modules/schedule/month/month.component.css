@@ -1,9 +1,11 @@
 .month-schedule-container {
     margin: 0;
-    height: calc(100% - 8px);
+    height: calc(100% - 4px);
     width: 100%;
     min-width: 660px;
     max-width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .selected-range {
@@ -22,7 +24,7 @@ button {
 }
 
 .table {
-    height: calc(100% - 52px);
+    height: calc(100% - 58px);
     width: 100%;
     display: flex;
     user-select: none;
@@ -104,7 +106,7 @@ button {
     margin: 0;
     size: 12;
     white-space: nowrap;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .drag-task {

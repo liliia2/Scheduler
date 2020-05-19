@@ -47,7 +47,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
       if (result && !this.allTasks || result && result !== this.allTasks) {
-        this.allTasks = result;
+        this.allTasks = this.filterByWorkingTime(result);
         this.allTasks = this.sortReceivedTask();
         if (this.checkedTypes && this.checkedUsers) {
           this.createSchedule();
@@ -70,6 +70,13 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  filterByWorkingTime(tasks: ITask[]) {
+    return tasks.filter((task) =>
+      task.end > +moment(this.startWork).format('X') &&
+      task.start < +moment(this.endWork).format('X')
+    );
   }
 
   setStarEndWork(): void {

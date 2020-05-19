@@ -10,6 +10,7 @@ import { LoadSettings, UpdateSettings } from 'src/app/store/actions/settings.act
 import { selectSettings } from 'src/app/store/selectors/settings.selector';
 import { ComponentCanDeactivate } from './exit-settings.guard';
 import { ConfirmModalComponent } from 'src/app/modals/confirm-modal/confirm-modal.component';
+import { NoticeModalComponent } from 'src/app/modals/notice-modal/notice-modal.component';
 
 @Component({
   selector: 'app-settings',
@@ -38,9 +39,10 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
   ) {
     this.subscription = this.store.select(selectSettings).subscribe(result => {
       if (
-          result && !this.settings ||
-          result && result !== this.settings
-        ) {
+        result && !this.settings ||
+        result && result !== this.settings
+      ) {
+        if (this.settings) { this.showNotification(); }
         this.settings = result;
         this.setValue();
       }
@@ -55,6 +57,17 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  showNotification() {
+    const dialogRef = this.dialog.open(NoticeModalComponent, {
+      width: '400px',
+      data: {
+        confirmButtonTxt: 'Cancel',
+        confirmTxt: 'Successfully action'
+      }
+    });
+    setTimeout(() => { dialogRef.close(); }, 800);
   }
 
   setValue() {

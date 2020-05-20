@@ -47,7 +47,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
     this.stopDragTask();
     const tasksSub = this.store.select(selectTasksList).subscribe(result => {
       if (result && !this.allTasks || result && result !== this.allTasks) {
-        this.allTasks = this.filterByWorkingTime(result);
+        this.allTasks = result;
         this.allTasks = this.sortReceivedTask();
         if (this.checkedTypes && this.checkedUsers) {
           this.createSchedule();
@@ -115,7 +115,8 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getTaskByDate(date: string): ITask[] {
-    const filtredByDate = this.allTasks.filter(
+    const filtredByWorkingTime = this.filterByWorkingTime(this.allTasks);
+    const filtredByDate = filtredByWorkingTime.filter(
       (task) => moment(task.start, 'X').startOf('day').format('X') === date
     );
     return this.tasksFilterByUser(filtredByDate);

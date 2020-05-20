@@ -144,6 +144,7 @@ button:active {
     text-align: left;
     overflow: hidden;
     min-width: 20px;
+    max-width: 520px;
 }
 
 .color1 {

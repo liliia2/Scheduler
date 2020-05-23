@@ -37,6 +37,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   workingDays: Array<number>;
   startHour: string;
   endHour: string;
+  showFilter = true;
 
   constructor(
     private store: Store<IAppState>

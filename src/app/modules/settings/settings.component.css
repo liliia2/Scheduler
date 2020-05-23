@@ -10,11 +10,22 @@
     max-width: 90%;
 }
 
+.nav {
+    margin: 24px auto 0;
+    max-width: 1440px;
+    width: 100%;
+}
+
+a.back-link {
+    text-decoration: none;
+    color: grey;
+}
+
 .settings {
     height: calc(100% - 56px);
     max-width: 660px;
     margin: auto;
-    padding: 24px;
+    padding: 0 24px 24px;
 }
 
 .settings h2 {

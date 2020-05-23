@@ -42,7 +42,7 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
         result && !this.settings ||
         result && result !== this.settings
       ) {
-        if (this.settings) { this.showNotification(); }
+        if (this.settings) { this.showNotification('Cancel', 'Settings successfully saved'); }
         this.settings = result;
         this.setValue();
       }
@@ -59,12 +59,12 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
     this.subscription.unsubscribe();
   }
 
-  showNotification() {
+  showNotification(text: string, btn: string) {
     const dialogRef = this.dialog.open(NoticeModalComponent, {
       width: '400px',
       data: {
-        confirmButtonTxt: 'Cancel',
-        confirmTxt: 'Successfully action'
+        confirmButtonTxt: text,
+        confirmTxt: btn
       }
     });
     setTimeout(() => { dialogRef.close(); }, 800);
@@ -143,7 +143,10 @@ export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactiv
   }
 
   saveSettings() {
-    if (!this.editMode) { return; }
+    if (!this.editMode) {
+      this.showNotification('Cancel', 'This settings already saved');
+      return;
+    }
     const newSettings = {
       startWeek: this.daysOfWeek.indexOf(this.firstWeekDay),
       workingDays: this.workingDays,

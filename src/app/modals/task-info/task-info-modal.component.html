@@ -16,11 +16,11 @@
   </div>
   <div mat-dialog-actions>
     <div class="delete-button">
-      <button mat-button color="warn" (click)="deleteTask()">Delete</button>
+      <button mat-button color="warn" (click)="deleteTask()" (mousedown)="deleteTask()">Delete</button>
     </div>
     <div class="right-buttons">
-      <button mat-button (click)="onCancelClick()">Cancel</button>
-      <button mat-raised-button color="accent" (click)="editTask()">Edit</button>
+      <button mat-button (click)="onCancelClick()" (mousedown)="onCancelClick()">Cancel</button>
+      <button mat-raised-button color="accent" (click)="editTask()" (mousedown)="editTask()">Edit</button>
     </div>
   </div>
 </div>

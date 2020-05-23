@@ -52,7 +52,7 @@ export class TaskInfoModalComponent implements OnInit {
   }
 
   onCancelClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(TaskInfoModalComponent);
   }
 
 }

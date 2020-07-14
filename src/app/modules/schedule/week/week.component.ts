@@ -259,7 +259,11 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     for (const element of uncrossedTasks) {
       const col = this.getColumnPosition(element.info.day);
       element.column = col + '/' + (col + 1);
-      element.row = this.getRowStart(element.info.start) + '/' + this.getRowEnd(element.info.end);
+      const startWork = +(this.getStartSheduleHour(element.info.start).format('X'));
+      const endWork = +(this.getEndSheduleHour(element.info.end).format('X'));
+      let start = (element.info.start < startWork ? startWork : element.info.start);
+      let end = (element.info.end > endWork ? endWork : element.info.end);
+      element.row = this.getRowStart(start) + '/' + this.getRowEnd(end);
     }
     return uncrossedTasks;
   }
@@ -271,8 +275,8 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
       let indexesOfGroup = [];
       let groupStartTime: number;
       let groupEndTime: number;
-      const startWork = +(this.getStartSheduleHour(crossedTasks[0].info.start).format('X'));
-      const endWork = +(this.getEndSheduleHour(crossedTasks[0].info.end).format('X'));
+      const startWork = +(moment(this.getStartSheduleHour(crossedTasks[0].info.start)).format('X'));
+      const endWork = +(moment(this.getEndSheduleHour(crossedTasks[0].info.end)).format('X'));
       for (const element of crossedTasks) {
         element.cross = [...new Set(element.cross)];
       }
@@ -324,14 +328,12 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
           columnStart = columnStart % item.subgridColumn;
         }
         const columnEnd = columnStart + 1;
-        let itemStart = item.groupStartTime;
-        let itemEnd = item.groupEndTime;
-        itemStart = (itemStart > item.tasks[i].info.start) ? item.tasks[i].info.start : itemStart;
-        itemEnd = (itemEnd > item.tasks[i].info.end) ? item.tasks[i].info.end : itemEnd;
+        let start = (item.groupStartTime < item.tasks[i].info.start) ? item.tasks[i].info.start : item.groupStartTime;
+        let end = (item.groupEndTime > item.tasks[i].info.end) ? item.tasks[i].info.end : item.groupEndTime;
         item.tasks[i].column = columnStart + '/' + columnEnd;
         item.tasks[i].row =
-          this.getRowStart(item.tasks[i].info.start, itemStart) + '/' +
-          this.getRowEnd(itemEnd, itemStart);
+          this.getRowStart(start, item.groupStartTime) + '/' +
+          this.getRowEnd(end, item.groupStartTime);
       }
     }
 
@@ -350,16 +352,16 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getRowStart(start: number, itemStart?: number): number {
-    const startBlock = itemStart ? itemStart : this.getStartSheduleHour(start);
+  getRowStart(start: number, groupStartTime?: number): number {
+    const startBlock = groupStartTime ? groupStartTime : this.getStartSheduleHour(start);
     return Math.ceil((
       moment(start, 'X')
         .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
     );
   }
 
-  getRowEnd(end: number, itemStart?: number): number {
-    const startBlock = itemStart ? itemStart : this.getStartSheduleHour(end);
+  getRowEnd(end: number, groupEndTime?: number): number {
+    const startBlock = groupEndTime ? groupEndTime : this.getStartSheduleHour(end);
     return Math.ceil((
       moment(end, 'X')
         .diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
@@ -453,9 +455,16 @@ export class WeekComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addNewTask(day?: any): void {
-    if (typeof day === 'number') { day = moment(day, 'X').toDate(); }
-    const start = moment(day).format('HH:mm');
-    const end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    let start: string, end: string;
+    if (day && typeof day === 'number') {
+      day = moment(day, 'X').toDate();
+      start = moment(day, 'X').format('HH:mm');
+      end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    } else if (day) {
+      day = moment(day).toDate();
+      start = moment(day).format('HH:mm');
+      end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    }
     if (!this.showTaskInfoMode) {
       this.dialog.open(TaskModalComponent, {
         width: '540px',

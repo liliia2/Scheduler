@@ -269,15 +269,13 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
           columnStart = columnStart % item.subgridColumn;
         }
         const columnEnd = columnStart + 1;
-        let itemStart = item.groupStartTime;
-        let itemEnd = item.groupEndTime;
-        itemStart = (itemStart > item.tasks[i].info.start) ? item.tasks[i].info.start : itemStart;
-        itemEnd = (itemEnd > item.tasks[i].info.end) ? item.tasks[i].info.end : itemEnd;
+        let start = (item.groupStartTime < item.tasks[i].info.start) ? item.tasks[i].info.start : item.groupStartTime;
+        let end = (item.groupEndTime > item.tasks[i].info.end) ? item.tasks[i].info.end : item.groupEndTime;
         item.tasks[i].column = columnStart + '/' + columnEnd;
         item.tasks[i].row =
-          this.getRowStart(item.tasks[i].info.start, itemStart) + '/' +
-          this.getRowEnd(itemEnd, itemStart);
-        }
+          this.getRowStart(start, item.groupStartTime) + '/' +
+          this.getRowEnd(end, item.groupStartTime);
+      }
     }
 
     return updTasks;
@@ -285,21 +283,23 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
 
   sortUncrossedTasks(uncrossedTasks: any[]): any {
     for (const element of uncrossedTasks) {
+      let start = (element.info.start < moment(this.startWork).format('X') ? this.startWork : element.info.start);
+      let end = (element.info.end > moment(this.endWork).format('X') ? this.endWork : element.info.end);
       element.column = '1/2';
-      element.row = this.getRowStart(element.info.start) + '/' + this.getRowEnd(element.info.end);
+      element.row = this.getRowStart(start) + '/' + this.getRowEnd(end);
     }
     return uncrossedTasks;
   }
 
-  getRowStart(start: number, itemStart?: number): number {
-    const startBlock = itemStart ? itemStart : +moment(this.startWork).format('X');
+  getRowStart(start: number, groupStartTime?: number): number {
+    const startBlock = groupStartTime ? groupStartTime : +moment(this.startWork).format('X');
     return Math.ceil((
       moment(start, 'X').diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
     );
   }
 
-  getRowEnd(end: number, itemStart?: number): number {
-    const startBlock = itemStart ? itemStart : +moment(this.startWork).format('X');
+  getRowEnd(end: number, groupEndTime?: number): number {
+    const startBlock = groupEndTime ? groupEndTime : +moment(this.startWork).format('X');
     return Math.ceil((
       moment(end, 'X').diff(moment(startBlock, 'X'), 'minutes') / this.timeInterval) + 1
     );
@@ -308,7 +308,7 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
   getWorkingHours(): Array<string> {
     let time = moment(this.startHour, 'HH:mm');
     const end = moment(this.endHour, 'HH:mm');
-    const arr = [ time.format('HH:mm') ];
+    const arr = [time.format('HH:mm')];
     do {
       time = moment(time).add(this.timeInterval, 'minutes');
       if (!moment(time).isBefore(end)) { continue; }
@@ -368,9 +368,16 @@ export class DayComponent implements OnInit, OnChanges, OnDestroy {
 
   addNewTask(day?: any): void {
     if (this.showTaskInfoMode) { return; }
-    if (typeof day === 'number') { day = moment(day, 'X').toDate(); }
-    const start = moment(day).format('HH:mm');
-    const end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    let start: string, end: string;
+    if (typeof day === 'number') {
+      day = moment(day, 'X').toDate();
+      start = moment(day, 'X').format('HH:mm');
+      end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    } else {
+      day = this.selectedDay;
+      start = moment(this.startWork).format('HH:mm');
+      end = moment(start, 'HH:mm').add(this.timeInterval, 'minutes').format('HH:mm');
+    }
     if (!this.showTaskInfoMode) {
       this.dialog.open(TaskModalComponent, {
         width: '540px',
